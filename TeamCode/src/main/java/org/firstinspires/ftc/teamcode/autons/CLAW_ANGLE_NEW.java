@@ -8,24 +8,27 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class CLAW_ANGLE {
+public class CLAW_ANGLE_NEW {
     private Servo Claw_Angle;
-    public CLAW_ANGLE(HardwareMap hardwareMap) {
+    public CLAW_ANGLE_NEW(HardwareMap hardwareMap) {
         Claw_Angle = hardwareMap.get(Servo.class, "Claw_Angle");
         Claw_Angle.scaleRange(0.04, 0.7);
     }
 
-    public class Forward implements Action {
+    public class MoveClawAngle implements Action {
         ElapsedTime time = new ElapsedTime();
         boolean start;
         double runTime;
-        public Forward(){
+        double pos;
+        public MoveClawAngle(double pos){
             start = false;
-            runTime = 0.5;
+            runTime = 0;
+            this.pos = pos;
         }
-        public Forward(double runt){
+        public MoveClawAngle(double pos, double runt){
             start = false;
             runTime = runt;
+            this.pos = pos;
         }
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
@@ -36,73 +39,21 @@ public class CLAW_ANGLE {
             if (time.seconds() < runTime) {
                 return true;
             } else {
-                Claw_Angle.setPosition(0);
+                Claw_Angle.setPosition(pos);
                 return false;
             }
         }
     }
     public Action forward() {
-        return new Forward();
+        return new MoveClawAngle(0);
     }
     public Action forward(double runt) {
-        return new Forward(runt);
-    }
-
-    public class Backward implements Action {
-        ElapsedTime time = new ElapsedTime();
-        boolean start;
-        double runTime;
-        public Backward(){
-            start = false;
-            runTime = 0.5;
-        }
-        public Backward(double runt){
-            start = false;
-            runTime = runt;
-        }
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            if (!start) {
-                time.reset();
-                start = true;
-            }
-            if (time.seconds() < runTime) {
-                return true;
-            } else {
-                Claw_Angle.setPosition(1);
-                return false;
-            }
-        }
+        return new MoveClawAngle(0,runt);
     }
     public Action backward() {
-        return new Backward();
+        return new MoveClawAngle(1);
     }
     public Action backward(double runt) {
-        return new Backward(runt);
-    }
-    public class Backward2 implements Action {
-        ElapsedTime time = new ElapsedTime();
-        boolean start;
-        double runTime;
-        public Backward2(){
-            start = false;
-            runTime = 1;
-        }
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            if (!start) {
-                time.reset();
-                start = true;
-            }
-            if (time.seconds() < runTime) {
-                return true;
-            } else {
-                Claw_Angle.setPosition(1);
-                return false;
-            }
-        }
-    }
-    public Action backward2() {
-        return new Backward2();
+        return new MoveClawAngle(1,runt);
     }
 }
