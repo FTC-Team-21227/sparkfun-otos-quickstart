@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,8 +20,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.autons.PoseStorage;
 
-@TeleOp(name = "TeleOp2425_V3Robot")
-public class TeleOp2425_V3Robot extends LinearOpMode {
+@TeleOp(name = "TeleOp2425_V3Robot_Pinpoint")
+public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
     private PIDController controller1;
     private PIDController controller2;
@@ -56,11 +57,13 @@ public class TeleOp2425_V3Robot extends LinearOpMode {
     private final double wall2_2 = 168.9771;
     private final double floor2 = 159.8503;
     private final double down2 = 5.0199819357;
+    private final double sub = 8.1777; //6.4322;
+    private final double sub2 = 154.721207477;
     private DcMotor W_BL;
     private DcMotor W_BR;
     private DcMotor W_FR;
     private DcMotor W_FL;
-    private IMU imu;
+    private GoBildaPinpointDriver pinpoint;
     private DcMotor ARM1; //bottom arm
     private DcMotor ARM2; //top arm
     private CRServo Hook;
@@ -70,10 +73,8 @@ public class TeleOp2425_V3Robot extends LinearOpMode {
     private Servo Sweeper;
     private TouchSensor ARM1Sensor;
     private TouchSensor ARM2Sensor;
-
     double Heading_Angle;
     double Motor_power_BR;
-    Orientation Direction;
     int imu_rotation;
     double Motor_power_BL;
     double Targeting_Angle;
@@ -89,7 +90,6 @@ public class TeleOp2425_V3Robot extends LinearOpMode {
     boolean hanging = false;
     int arm1Pos;
     int arm2Pos;
-    double initialHeading;
     String state = "a";
     double stateTime;
     boolean manual = false;
@@ -114,21 +114,11 @@ public class TeleOp2425_V3Robot extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException{
         //getting all the motors, servos, and sensors from the hardware map
-        Pose2d initialPose;
-        try {
-            initialPose = PoseStorage.currentPose;
-            telemetry.addData("Yay1!","Yay1!");
-        }
-        catch (Exception e){
-            initialPose = new Pose2d(0,0,0);
-            telemetry.addData("No!","No!");
-        }
-        initialHeading = Math.toDegrees(initialPose.heading.toDouble());
         W_BL = hardwareMap.get(DcMotor.class, "W_BL");
         W_BR = hardwareMap.get(DcMotor.class, "W_BR");
         W_FR = hardwareMap.get(DcMotor.class, "W_FR");
         W_FL = hardwareMap.get(DcMotor.class, "W_FL");
-        imu = hardwareMap.get(IMU.class, "imu");
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
         ARM1 = hardwareMap.get(DcMotor.class, "ARM1");
         ARM2 = hardwareMap.get(DcMotor.class, "ARM2");
         Hook = hardwareMap.get(CRServo.class, "Hook");
@@ -149,6 +139,7 @@ public class TeleOp2425_V3Robot extends LinearOpMode {
             // Put run blocks here.
             while (opModeIsActive()) {
                 currTime = getRuntime();
+                pinpoint.update(GoBildaPinpointDriver.readData.ONLY_UPDATE_HEADING);
                 // Put loop blocks here.
                 Calculate_IMU_Rotation_Power(); //calculates each motor power based on IMU reading
                 Calculate_Motor_Power(); //calculates translational and rotational motor power
@@ -175,17 +166,14 @@ public class TeleOp2425_V3Robot extends LinearOpMode {
                 Hook_Control();
                 //reset imu if necessary
                 if (gamepad1.back) {
-                    imu = hardwareMap.get(IMU.class, "imu");
-                    imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
-                    imu.resetYaw();
-                    initialHeading = 0;
+                    pinpoint.resetPosAndIMU();
                     Targeting_Angle = 0;
                     Heading_Angle = 0;
                 }
                 //        telemetry.addData("ARM1Calibrated",ARM1calibrated);
                 //        telemetry.addData("ARM2Calibrated", ARM2calibrated);
                 //        telemetry.addData("where am i going", !(ARM1calibrated && ARM2calibrated));
-                telemetry.addData("Direction", Heading_Angle);
+                telemetry.addData("Heading", Heading_Angle);
                 telemetry.addData("Motor Power", Motor_Power);
                 telemetry.addData("Side Power", Motor_side_power);
                 telemetry.addData("FWD Power", Motor_fwd_power);
@@ -207,7 +195,6 @@ public class TeleOp2425_V3Robot extends LinearOpMode {
                 telemetry.addData("State time", stateTime);
                 telemetry.addData("Run time", currTime);
                 telemetry.addData("Loop time", getRuntime()-currTime);
-                telemetry.addData("Initial heading",initialHeading);
                 telemetry.addData("ARM1 Sensor", ARM1Sensor.isPressed());
                 telemetry.addData("ARM2 Sensor", ARM2Sensor.isPressed());
                 telemetry.update();
@@ -419,7 +406,7 @@ public class TeleOp2425_V3Robot extends LinearOpMode {
         else if (gamepad1.y) {//high basket
             target1 = highBasket;
             target2 = highBasket2;
-//            Targeting_Angle = -45+initialHeading; //(add this?)
+//            Targeting_Angle = -45; //(add this?)
             stateTime = getRuntime();
             state = "highBasket";
             manual = false;
@@ -446,7 +433,7 @@ public class TeleOp2425_V3Robot extends LinearOpMode {
             manual = false;
         }
         if (gamepad1.start && gamepad1.left_bumper){
-            target1 = 6.4322;
+            target1 = 8.1777;
             target2 = 154.721207477;
         }
         else if (gamepad1.start) { //into submersible (not needed bc wall preset?)
@@ -489,7 +476,6 @@ public class TeleOp2425_V3Robot extends LinearOpMode {
      * Describe this function...
      */
     private void Initialization() {
-
         controller1 = new PIDController(p1, i1, d1);
         controller2 = new PIDController(p2, i2, d2);
 
@@ -526,16 +512,12 @@ public class TeleOp2425_V3Robot extends LinearOpMode {
         Claw_Angle.scaleRange(0.04, 0.7);
         Sweeper.scaleRange(0.085,0.45); //0.482
 
-
         Motor_Power = 0.5;
-        Targeting_Angle = initialHeading;
-        // Initialize the IMU with non-default settings. To use this block,
-        // plug one of the "new IMU.Parameters" blocks into the parameters socket.
-        // Create a Parameters object for use with an IMU in a REV Robotics Control Hub or
-        // Expansion Hub, specifying the hub's orientation on the robot via the direction that
-        // the REV Robotics logo is facing and the direction that the USB ports are facing.
-        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
-        imu.resetYaw();
+
+        pinpoint.recalibrateIMU();
+        pinpoint.update();
+        Targeting_Angle = pinpoint.getHeading();
+
         waitForStart();
     }
 
@@ -545,8 +527,7 @@ public class TeleOp2425_V3Robot extends LinearOpMode {
     private void Calculate_IMU_Rotation_Power() {
         double Angle_Difference;
 
-        Direction = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        Heading_Angle = Direction.firstAngle+initialHeading;
+        Heading_Angle = pinpoint.getHeading(); //degrees
         if (Math.abs(gamepad1.right_stick_x) >= 0.01) {
             imu_rotation = 0;
             Targeting_Angle = Heading_Angle;

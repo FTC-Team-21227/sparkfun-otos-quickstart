@@ -60,12 +60,12 @@ public class AUTON2025REDLEFT_V2Robot_3 extends LinearOpMode{
                 .strafeToSplineHeading(new Vector2d(52, 94), Math.toRadians(-90))//avoid bumping into submersible
                 .strafeTo(new Vector2d(52, 89),new TranslationalVelConstraint(15)); //touch bar
         Actions.runBlocking(
-                new ParallelAction(
-            claw.closeClaw(),
-            intake_angle.RotatePosition1(),
-            claw_angle.forward()
-                )
-            );
+            new ParallelAction(
+                claw.closeClaw(),
+                intake_angle.RotatePosition1(),
+                claw_angle.forward()
+            )
+        );
 
         waitForStart();
 
@@ -80,68 +80,67 @@ public class AUTON2025REDLEFT_V2Robot_3 extends LinearOpMode{
         Action ninthTrajectory = tab9.build();
 
         Actions.runBlocking(
-                new SequentialAction(
-                        new ParallelAction(
-                            intake_angle.RotatePosition0(),
-                            claw.closeClaw(),
-                            claw_angle.backward(),
-                            arm1.liftHighBasket(),
-                            arm2.liftHighBasket(),
-                            firstTrajectory
-                        ),
-                        claw.openClaw(),
-                        new ParallelAction(
-//                                secondTrajectory,
-                                thirdTrajectory,
-                                claw_angle.forward(),
-                                arm1.waitLiftFloor(1.5),
-                                arm2.waitLiftFloor(1.5)
-                        ),
-                        claw.closeClaw(),
-                        new ParallelAction(
-                            fourthTrajectory,
-                            claw_angle.backward(),
-                            arm1.waitLiftHighBasket(0.5),
-                            arm2.waitLiftHighBasket(0.5)
-                        ),
-                        claw.openClaw(),
-                        new ParallelAction(
-                                fifthTrajectory,
-                                claw_angle.forward(),
-                                arm1.waitLiftFloor(1.5),
-                                arm2.waitLiftFloor(1.5)
-                        ),
-                        claw.closeClaw(),
-                        new ParallelAction(
-                                sixthTrajectory,
-                                claw_angle.backward2(),
-                                arm1.waitLiftHighBasket(1),
-                                arm2.waitLiftHighBasket(1)
-                        ),
-                        claw.openClaw(),
-                        new ParallelAction(
-                                seventhTrajectory,
-                                claw_angle.forward(),
-                                arm1.waitLiftWall(1.5),
-                                arm2.waitLiftWall(1.5),
-                                arm1.waitLiftFloor(4.5,1),
-                                arm2.waitLiftFloor(4.5,1)
-                        ),
-                        claw.closeClaw(),
-                        new ParallelAction(
-                                eighthTrajectory,
-                                claw_angle.backward2(),
-                                arm1.waitLiftHighBasket(1),
-                                arm2.waitLiftHighBasket(1)
-                        ),
-                        claw.openClaw(),
-                        new ParallelAction(
-                            claw_angle.forward(),
-                            ninthTrajectory,
-                            arm1.waitLiftRung(1.5),
-                            arm2.waitLiftRung(1.5)
-                        )
+            new SequentialAction(
+                new ParallelAction(
+                    intake_angle.RotatePosition0(),
+                    claw.closeClaw(),
+                    claw_angle.backward(),
+                    arm1.liftHighBasket(),
+                    arm2.liftHighBasket(),
+                    firstTrajectory
+                ),
+                claw.openClaw(),
+                new ParallelAction(
+                    thirdTrajectory,
+                    claw_angle.forward(),
+                    arm1.waitLiftFloor(1.5),
+                    arm2.waitLiftFloor(1.5)
+                ),
+                claw.closeClaw(),
+                new ParallelAction(
+                    fourthTrajectory,
+                    claw_angle.backward(),
+                    arm1.waitLiftHighBasket(0.5),
+                    arm2.waitLiftHighBasket(0.5)
+                ),
+                claw.openClaw(),
+                new ParallelAction(
+                    fifthTrajectory,
+                    claw_angle.forward(),
+                    arm1.waitLiftFloor(1.5),
+                    arm2.waitLiftFloor(1.5)
+                ),
+                claw.closeClaw(),
+                new ParallelAction(
+                    sixthTrajectory,
+                    claw_angle.backward2(),
+                    arm1.waitLiftHighBasket(1),
+                    arm2.waitLiftHighBasket(1)
+                ),
+                claw.openClaw(),
+                new ParallelAction(
+                    seventhTrajectory,
+                    claw_angle.forward(),
+                    arm1.waitLiftWall(1.5),
+                    arm2.waitLiftWall(1.5),
+                    arm1.waitLiftFloor(4.5,1),
+                    arm2.waitLiftFloor(4.5,1)
+                ),
+                claw.closeClaw(),
+                new ParallelAction(
+                    eighthTrajectory,
+                    claw_angle.backward2(),
+                    arm1.waitLiftHighBasket(1),
+                    arm2.waitLiftHighBasket(1)
+                ),
+                claw.openClaw(),
+                new ParallelAction(
+                    claw_angle.forward(),
+                    ninthTrajectory,
+                    arm1.waitLiftRung(1.5),
+                    arm2.waitLiftRung(1.5)
                 )
+            )
         );
         PoseStorage.currentPose = drive.pose;
     }

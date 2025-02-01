@@ -140,14 +140,12 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
                 telemetry.addData("ARM1Target: ", target1);
                 telemetry.addData("ARM2 Current Angle: ", arm2Pos/ticks_in_degree_2);
                 telemetry.addData("ARM2 Target Angle: ", target2);
-                telemetry.addData("ARM1 Pressed:",ARM1Sensor.isPressed());
-                telemetry.addData("ARM2 Pressed:",ARM2Sensor.isPressed());
                 telemetry.addData("Claw", Claw.getPosition());
                 telemetry.addData("Intake angle", Intake_Angle.getPosition());
                 telemetry.addData("ARM1 Power", ARM1.getPower());
                 telemetry.addData("ARM2 Power", ARM2.getPower());
-                telemetry.addData("ARM1 Sensor", ARM1Sensor);
-                telemetry.addData("ARM2 Sensor", ARM2Sensor);
+                telemetry.addData("ARM1 Sensor", ARM1Sensor.isPressed());
+                telemetry.addData("ARM2 Sensor", ARM2Sensor.isPressed());
 
 
                 telemetry.update();

@@ -57,10 +57,16 @@ public class CLAW_NEW {
     public Action openClaw(double runt) {
         return new MoveClaw(0, runt);
     }
+    public Action openClaw_Left() {
+        return new MoveClaw(-0.3);
+    }
+    public Action openClaw_Left(double runt) {
+        return new MoveClaw(-0.3, runt);
+    }
     public Action openSlightly() {
-        return new MoveClaw(0.5);
+        return new MoveClaw(0.8);
     }
     public Action openSlightly(double runt) {
-        return new MoveClaw(0.5, runt);
+        return new MoveClaw(0.8, runt);
     }
 }

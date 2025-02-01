@@ -8,24 +8,25 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class INTAKE_ANGLE_NEW {
-    private Servo Intake_Angle;
+public class SWEEPER {
+    private Servo Sweeper;
 
-    public INTAKE_ANGLE_NEW(HardwareMap hardwareMap) {
-        Intake_Angle = hardwareMap.get(Servo.class, "Intake_Angle");
+    public SWEEPER(HardwareMap hardwareMap) {
+        Sweeper = hardwareMap.get(Servo.class, "Sweeper");
+        Sweeper.scaleRange(0.085,0.482);
     }
 
-    public class MoveIntakeAngle implements Action {
+    public class MoveSweeper implements Action {
         ElapsedTime time = new ElapsedTime();
         boolean start;
         double runTime;
         double pos;
-        public MoveIntakeAngle(double pos){
+        public MoveSweeper(double pos){
             start = false;
             runTime = 0;
             this.pos = pos;
         }
-        public MoveIntakeAngle(double pos, double runt){
+        public MoveSweeper(double pos, double runt){
             start = false;
             runTime = runt;
             this.pos = pos;
@@ -39,27 +40,28 @@ public class INTAKE_ANGLE_NEW {
             if (time.seconds() < runTime) {
                 return true;
             } else {
-                Intake_Angle.setPosition(pos); //0.28 //0.65
+                Sweeper.setPosition(pos); //0.28 //0.65
                 return false;
             }
         }
     }
     public Action RotatePosition0() {
-        return new MoveIntakeAngle(/*0.26*/0.185);
+        return new MoveSweeper(/*0.26*/0);
     }
     public Action RotatePosition0(double runt) {
-        return new MoveIntakeAngle(/*0.26*/0.185, runt);
+        return new MoveSweeper(/*0.26*/0, runt);
     }
     public Action RotatePosition1() {
-        return new MoveIntakeAngle(0.8);
+        return new MoveSweeper(1);
     }
     public Action RotatePosition1(double runt) {
-        return new MoveIntakeAngle(0.8, runt);
+        return new MoveSweeper(1, runt);
     }
+
     public Action RotatePositionNegative1() {
-        return new MoveIntakeAngle(-0.064);
+        return new MoveSweeper(-0.064);
     }
     public Action RotatePositionNegative1(double runt) {
-        return new MoveIntakeAngle(-0.064,runt);
+        return new MoveSweeper(-0.064,runt);
     }
 }
