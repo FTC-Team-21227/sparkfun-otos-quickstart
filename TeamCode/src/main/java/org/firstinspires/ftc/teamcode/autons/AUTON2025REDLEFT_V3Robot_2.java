@@ -23,9 +23,9 @@ public class AUTON2025REDLEFT_V3Robot_2 extends LinearOpMode{
         PinpointDrive_Left drive = new PinpointDrive_Left(hardwareMap, initialPose);
         ARM1_V2Robot arm1 = new ARM1_V2Robot(hardwareMap);
         ARM2_V2Robot arm2 = new ARM2_V2Robot(hardwareMap);
-        CLAW_LEFT claw = new CLAW_LEFT(hardwareMap);
-        INTAKE_ANGLE intake_angle = new INTAKE_ANGLE(hardwareMap);
-        CLAW_ANGLE claw_angle = new CLAW_ANGLE(hardwareMap);
+        CLAW_NEW claw = new CLAW_NEW(hardwareMap);
+        INTAKE_ANGLE_NEW intake_angle = new INTAKE_ANGLE_NEW(hardwareMap);
+        CLAW_ANGLE_NEW claw_angle = new CLAW_ANGLE_NEW(hardwareMap);
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
                 .strafeTo(new Vector2d(10, 92))
 //                .waitSeconds(1)
@@ -86,7 +86,7 @@ public class AUTON2025REDLEFT_V3Robot_2 extends LinearOpMode{
                         new ParallelAction(
                             intake_angle.RotatePosition0(),
                             claw.closeClaw(),
-                            claw_angle.backward(),
+                            claw_angle.backward(0.5),
                             arm1.liftHighBasket(),
                             arm2.liftHighBasket(),
                             firstTrajectory
@@ -95,35 +95,35 @@ public class AUTON2025REDLEFT_V3Robot_2 extends LinearOpMode{
                         new ParallelAction(
 //                                secondTrajectory,
                                 thirdTrajectory,
-                                claw_angle.forward(),
+                                claw_angle.forward(0.5),
                                 arm1.waitLiftFloor(1.5),
                                 arm2.waitLiftFloor(1.5)
                         ),
                         claw.closeClaw(),
                         new ParallelAction(
                             fourthTrajectory,
-                            claw_angle.backward(),
+                            claw_angle.backward(0.5),
                             arm1.waitLiftHighBasket(0.5),
                             arm2.waitLiftHighBasket(0.5)
                         ),
                         claw.openClaw(),
                         new ParallelAction(
                                 fifthTrajectory,
-                                claw_angle.forward(),
+                                claw_angle.forward(0.5),
                                 arm1.waitLiftFloor(1.5),
                                 arm2.waitLiftFloor(1.5)
                         ),
                         claw.closeClaw(),
                         new ParallelAction(
                                 sixthTrajectory,
-                                claw_angle.backward2(),
+                                claw_angle.backward(1),
                                 arm1.waitLiftHighBasket(1),
                                 arm2.waitLiftHighBasket(1)
                         ),
                         claw.openClaw(),
                         new ParallelAction(
                                 seventhTrajectory,
-                                claw_angle.forward(),
+                                claw_angle.forward(0.5),
                                 arm1.waitLiftWall(1.5),
                                 arm2.waitLiftWall(1.5),
                                 arm1.waitLiftFloor(4.5,1, 0.25),
@@ -132,13 +132,13 @@ public class AUTON2025REDLEFT_V3Robot_2 extends LinearOpMode{
                         claw.closeClaw(),
                         new ParallelAction(
                                 eighthTrajectory,
-                                claw_angle.backward2(),
+                                claw_angle.backward(1),
                                 arm1.waitLiftHighBasket(1),
                                 arm2.waitLiftHighBasket(1)
                         ),
                         claw.openClaw(),
                         new ParallelAction(
-                            claw_angle.forward(),
+                            claw_angle.forward(0.5),
                             ninthTrajectory,
                             arm1.waitLiftRung(1.5),
                             arm2.waitLiftRung(1.5)
