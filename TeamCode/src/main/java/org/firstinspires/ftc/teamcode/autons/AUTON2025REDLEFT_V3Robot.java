@@ -263,7 +263,7 @@ public class AUTON2025REDLEFT_V3Robot extends LinearOpMode{
                 .waitSeconds(0.5)
                 .strafeToLinearHeading(new Vector2d(10,118),Math.toRadians(10))
                 .waitSeconds(1.5)
-                .turnTo(Math.toRadians(25)); //get 3rd sample from the left side
+                .turnTo(Math.toRadians(28)); //get 3rd sample from the left side
 //                .strafeTo(new Vector2d(10.5, 122.5)); //get 1st sample
         TrajectoryActionBuilder tab8 = drive.actionBuilder(new Pose2d(10,118, drive.pose.heading.toDouble()))
                 .waitSeconds(2)
@@ -276,7 +276,7 @@ public class AUTON2025REDLEFT_V3Robot extends LinearOpMode{
                 .strafeTo(new Vector2d(64.5+Y, 94-X)); //get 4th sample
         TrajectoryActionBuilder tab10 = drive.actionBuilder(new Pose2d(64.5+Y,94-X, Math.toRadians(-90)))
                 .waitSeconds(2)
-                .strafeTo(new Vector2d(63.5,100))
+                .strafeTo(new Vector2d(64.5,100))
                 .strafeToLinearHeading(new Vector2d(8, 112.5), Math.toRadians(-45)) //go away from wall bec arms lifting
                 .waitSeconds(0.7);
         TrajectoryActionBuilder tab11 = drive.actionBuilder(new Pose2d(8.5, 112, Math.toRadians(-45)))
