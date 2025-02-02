@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Subsystem_Constants;
 import org.firstinspires.ftc.teamcode.TunePID;
 
 public class ARM1_V2Robot {
@@ -27,16 +28,16 @@ public class ARM1_V2Robot {
     private final double x2 = 26.4;
     private final double m1 = 810;
     private final double m2 = 99.79;
-    private final double highBasket = 97.854286777;
-    private final double highRung = 3.3954; //2.5585;
-    private final double highRung2 = 42.4905; //37.6126; //49.1587;
+    private final double highBasket = Subsystem_Constants.highBasket1;
+    private final double highRung = Subsystem_Constants.highRung1;
+    private final double highRung2 = Subsystem_Constants.highRung1_2;
 
-    private final double wall = 15.0642;
-    private final double wall2 = 32.0412; //33.3803; //not tested
-    private final double lowBasket = 50; //not tested
-    private final double floor = 0.6217;
-    private final double down = 4.48338159887;
-    private final double sub = 8.1777; //6.4322;
+    private final double wall = Subsystem_Constants.wall1;
+    private final double wall2 = Subsystem_Constants.wall1_2;
+    private final double lowBasket = Subsystem_Constants.lowBasket1;
+    private final double floor = Subsystem_Constants.floor1;
+    private final double down = Subsystem_Constants.down1;
+    private final double sub = Subsystem_Constants.sub1;
 
     public ARM1_V2Robot(HardwareMap hardwareMap) {
         arm1 = hardwareMap.get(DcMotor.class, "ARM1");
@@ -223,4 +224,5 @@ public class ARM1_V2Robot {
     public Action waitLiftSub(double waitseconds, double seconds) {return new waitLiftTarget(sub, waitseconds, seconds);}
     public Action waitLiftFloor(double waitseconds, double seconds, double power) {return new waitLiftTarget(floor, waitseconds, seconds, power);}
     public Action waitLiftSub(double waitseconds, double seconds, double power) {return new waitLiftTarget(sub, waitseconds, seconds, power);}
+    public Action waitLiftDown(double waitseconds, double seconds, double power) {return new waitLiftTarget(down, waitseconds, seconds, power);}
 }

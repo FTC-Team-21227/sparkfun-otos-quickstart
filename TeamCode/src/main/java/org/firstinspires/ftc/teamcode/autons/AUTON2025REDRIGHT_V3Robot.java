@@ -33,10 +33,10 @@ public class AUTON2025REDRIGHT_V3Robot extends LinearOpMode {
 
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose) //first specimen
                 .setTangent(Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(9.5,firstSpecDistance),Math.toRadians(90));
-        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(9.5, firstSpecDistance, Math.toRadians(-90))) //push colored samples
+                .splineToConstantHeading(new Vector2d(9,firstSpecDistance),Math.toRadians(90));
+        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(9, firstSpecDistance, Math.toRadians(-90))) //push colored samples
                 .setTangent(Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(9.5,-42),Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(9,-42),Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(39, -47),Math.toRadians(0))
                 .setTangent(Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(39,-25),Math.toRadians(90))
@@ -160,7 +160,7 @@ public class AUTON2025REDRIGHT_V3Robot extends LinearOpMode {
                         claw.closeClaw(),
                         //pick up and place second specimen
                         new ParallelAction(
-                            sweeper.RotatePosition0(),
+                            sweeper.RotatePosition0(0.5),
                             arm1.waitLiftRung2(0.3),
                             arm2.waitLiftRung2(0.3),
                             sixthTrajectory,

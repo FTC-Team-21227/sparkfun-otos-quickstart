@@ -8,11 +8,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Subsystem_Constants;
+
 public class CLAW_NEW {
     private Servo Claw;
+    final double clawScale0 = Subsystem_Constants.clawScale0;
+    final double clawScale1 = Subsystem_Constants.clawScale1;
+    final double closeClaw = Subsystem_Constants.closeClaw;
+    final double openClaw = Subsystem_Constants.openClaw;
     public CLAW_NEW(HardwareMap hardwareMap) {
         Claw = hardwareMap.get(Servo.class, "Claw");
-        Claw.scaleRange(0.45,1);
+        Claw.scaleRange(clawScale0,clawScale1);
     }
 
 
@@ -46,27 +52,15 @@ public class CLAW_NEW {
         }
     }
     public Action closeClaw() {
-        return new MoveClaw(1);
+        return new MoveClaw(closeClaw);
     }
     public Action closeClaw(double runt) {
-        return new MoveClaw(1, runt);
+        return new MoveClaw(closeClaw, runt);
     }
     public Action openClaw() {
-        return new MoveClaw(0);
+        return new MoveClaw(openClaw);
     }
     public Action openClaw(double runt) {
-        return new MoveClaw(0, runt);
-    }
-    public Action openClaw_Left() {
-        return new MoveClaw(-0.3);
-    }
-    public Action openClaw_Left(double runt) {
-        return new MoveClaw(-0.3, runt);
-    }
-    public Action openSlightly() {
-        return new MoveClaw(0.8);
-    }
-    public Action openSlightly(double runt) {
-        return new MoveClaw(0.8, runt);
+        return new MoveClaw(openClaw, runt);
     }
 }

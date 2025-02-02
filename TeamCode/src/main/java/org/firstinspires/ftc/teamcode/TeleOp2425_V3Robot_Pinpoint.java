@@ -2,23 +2,16 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.autons.PoseStorage;
+import org.firstinspires.ftc.teamcode.Subsystem_Constants;
 
 @TeleOp(name = "TeleOp2425_V3Robot_Pinpoint")
 public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
@@ -42,23 +35,50 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     private final double x2 = 26.4;
     private final double m1 = 810;
     private final double m2 = 99.79;
-    private final double highBasket = 97.854286777;
-    private final double highRung = 3.3954; //2.5585; //2.6781
-    private final double highRung1_2 = 42.4905; //49.1587;
+    private final double highBasket1 = Subsystem_Constants.highBasket1;
+    private final double highRung1 = Subsystem_Constants.highRung1;
+    private final double highRung1_2 = Subsystem_Constants.highRung1_2;
+    private final double wall1 = Subsystem_Constants.wall1;
+    private final double wall1_2 = Subsystem_Constants.wall1_2;
+    private final double lowBasket1 = Subsystem_Constants.lowBasket1;
+    private final double floor1 = Subsystem_Constants.floor1;
+    private final double down1 = Subsystem_Constants.down1;
+    private final double sub1 = Subsystem_Constants.sub1;
 
-    private final double wall = 15.0642;
-    private final double wall1_2 = 32.0412; //33.3803;
-    private final double floor = 0.6217;
-    private final double down = 4.48338159887;
-    private final double highBasket2 = 131.0525;
-    private final double highRung2 = 91-0.722; //90.7355; //88.72; //87.1025;  //90.381; //91.7102; //94.457; //90.381; //92.6; //90.2671;
-    private final double highRung2_2 = 38.3676;//31.1093;
-    private final double wall2 = 156.4382; //154.8883; //157.0149; //154.8883;
-    private final double wall2_2 = 168.9771;
-    private final double floor2 = 159.8503;
-    private final double down2 = 5.0199819357;
-    private final double sub = 8.1777; //6.4322;
-    private final double sub2 = 154.721207477;
+    private final double highBasket2 = Subsystem_Constants.highBasket2;
+    final double highRung2 = Subsystem_Constants.highRung2;
+    final double highRung2_2 = Subsystem_Constants.highRung2_2;
+    private final double wall2 = Subsystem_Constants.wall2;
+    private final double wall2_2 = Subsystem_Constants.wall2_2;
+    private final double lowBasket2 = Subsystem_Constants.lowBasket2;
+    private final double floor2 = Subsystem_Constants.floor2;
+    private final double down2 = Subsystem_Constants.down2;
+    private final double sub2 = Subsystem_Constants.sub2;
+
+    final double clawScale0 = Subsystem_Constants.clawScale0;
+    final double clawScale1 = Subsystem_Constants.clawScale1;
+    final double closeClaw = Subsystem_Constants.closeClaw;
+    final double openClaw = Subsystem_Constants.openClaw;
+
+    final double intake_AngleScale0 = Subsystem_Constants.intake_AngleScale0;
+    final double intake_AngleScale1 = Subsystem_Constants.intake_AngleScale1;
+    final double intake_AngleFloor = Subsystem_Constants.intake_AngleFloor;
+    final double intake_AngleBasket = Subsystem_Constants.intake_AngleBasket;
+    final double intake_AngleRung = Subsystem_Constants.intake_AngleRung;
+    final double intake_AngleStart = Subsystem_Constants.intake_AngleStart;
+    final double intake_AngleWall = Subsystem_Constants.intake_AngleWall;
+    final double intake_AngleVertical = Subsystem_Constants.intake_AngleVertical;
+
+    final double claw_AngleScale0 = Subsystem_Constants.claw_AngleScale0;
+    final double claw_AngleScale1 = Subsystem_Constants.claw_AngleScale1;
+    final double claw_AngleForward = Subsystem_Constants.claw_AngleForward;
+    final double claw_AngleBackward = Subsystem_Constants.claw_AngleBackward;
+    final double claw_AngleLeft = Subsystem_Constants.claw_AngleLeft;
+
+    final double sweeperScale0 = Subsystem_Constants.sweeperScale0;
+    final double sweeperScale1 = Subsystem_Constants.sweeperScale1;
+    final double closeSweeper = Subsystem_Constants.closeSweeper;
+    final double openSweeper = Subsystem_Constants.openSweeper;
     private DcMotor W_BL;
     private DcMotor W_BR;
     private DcMotor W_FR;
@@ -101,9 +121,9 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     boolean hookUp = false;
     boolean hookDown = false;
     int claw = 0;
-    int claw_angle = 0;
+    double claw_angle = 0;
     double intake_angle = 0.26;
-    int sweeper = 0;
+    double sweeper = 0;
     boolean servoReset = false;
     double servoResetTime;
     double Lift_Power = 1;
@@ -205,49 +225,49 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
         if (state.equals("highBasket")) { //Intake Angle 0, swivel Claw Angle to face the basket
             telemetry.addData("In high basket", "yes");
             if (getRuntime() - stateTime > 0.25) {
-                if (intake_angle != 0.26) {
-                    Intake_Angle.setPosition(0.26);
-                    intake_angle = 0.26;
+                if (intake_angle != intake_AngleBasket) {
+                    Intake_Angle.setPosition(intake_AngleBasket);
+                    intake_angle = intake_AngleBasket;
                 }
-                if (claw_angle != 1) {
-                    Claw_Angle.setPosition(1);
-                    claw_angle = 1;
+                if (claw_angle != claw_AngleBackward) {
+                    Claw_Angle.setPosition(claw_AngleBackward);
+                    claw_angle = claw_AngleBackward;
                     telemetry.addData("fd", "whyu not rotating");
                 }
             }
         } else if (state.equals("highRung")) { //Intake Angle 0, Claw Angle 0
             if (getRuntime() - stateTime > 0.25) {
-                if (intake_angle != 0.185) {
-                    Intake_Angle.setPosition(0.185);
-                    intake_angle = 0.185;
+                if (intake_angle != intake_AngleRung) {
+                    Intake_Angle.setPosition(intake_AngleRung);
+                    intake_angle = intake_AngleRung;
                 }
-                if (claw_angle != 0) {
-                    Claw_Angle.setPosition(0);
-                    claw_angle = 0;
+                if (claw_angle != claw_AngleForward) {
+                    Claw_Angle.setPosition(claw_AngleForward);
+                    claw_angle = claw_AngleForward;
                 }
                 telemetry.addData("In high rung", "yes");
             }
         } else if (state.equals("wall")) {
-            if (claw_angle != 1) {
-                Claw_Angle.setPosition(1);
-                claw_angle = 1;
+            if (claw_angle != claw_AngleBackward) {
+                Claw_Angle.setPosition(claw_AngleBackward);
+                claw_angle = claw_AngleBackward;
             }
             if (getRuntime() - stateTime > 0.5) {
-                if (intake_angle != -0.064) {
-                    Intake_Angle.setPosition(-0.064);
-                    intake_angle = -0.064;
+                if (intake_angle != intake_AngleWall) {
+                    Intake_Angle.setPosition(intake_AngleWall);
+                    intake_angle = intake_AngleWall;
                 }
                 telemetry.addData("In wall", "yes");
             }
         } else if (state.equals("enterSub")) {
             if (getRuntime() - stateTime > 0.25) {
-                if (intake_angle != 0.26) {
-                    Intake_Angle.setPosition(0.26);
-                    intake_angle = 0.26;
+                if (intake_angle != intake_AngleFloor) {
+                    Intake_Angle.setPosition(intake_AngleFloor);
+                    intake_angle = intake_AngleFloor;
                 }
-                if (claw_angle != 0) {
-                    Claw_Angle.setPosition(0);
-                    claw_angle = 0;
+                if (claw_angle != claw_AngleForward) {
+                    Claw_Angle.setPosition(claw_AngleForward);
+                    claw_angle = claw_AngleForward;
                 }
                 telemetry.addData("In enter sub", "yes");
             }
@@ -261,42 +281,47 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
         }
         rightTriggerPressed = gamepad1.right_trigger > 0.1;
         if (gamepad1.left_trigger > 0.1 && !leftTriggerPressed && intake_angle < 3) {
-            if (intake_angle == -0.064){
-                intake_angle = 0.26;
+            if (intake_angle == intake_AngleWall){
+                intake_angle = intake_AngleFloor;
             }
-            else if (intake_angle == 0.26){
-                intake_angle = -0.064;
+            else if (intake_angle == intake_AngleFloor){
+                intake_angle = intake_AngleFloor;
             }
             Intake_Angle.setPosition(intake_angle);
             manual = true;
         }
         leftTriggerPressed = gamepad1.left_trigger > 0.1;
         if (gamepad1.right_bumper && !rightBumperPressed && claw_angle < 2) {
-            claw_angle = 1 - claw_angle;
+            if (claw_angle == claw_AngleBackward){
+                claw_angle = claw_AngleForward;
+            }
+            else if (claw_angle == claw_AngleForward){
+                claw_angle = claw_AngleBackward;
+            }
             Claw_Angle.setPosition(claw_angle);
             manual = true;
         }
         rightBumperPressed = gamepad1.right_bumper;
         if (gamepad1.left_stick_button && !leftStickPressed){ //reset claw angle and intake angle
-            Intake_Angle.setPosition(0.26);
-            intake_angle = 0.26;
+            Intake_Angle.setPosition(intake_AngleFloor);
+            intake_angle = intake_AngleFloor;
             servoResetTime = getRuntime();
             servoReset = true;
         }
         leftStickPressed = gamepad1.left_stick_button;
         if (servoReset && (getRuntime() > servoResetTime + 0.5)){
-            Claw_Angle.setPosition(0);
-            claw_angle = 0;
+            Claw_Angle.setPosition(claw_AngleForward);
+            claw_angle = claw_AngleForward;
             servoReset = false;
         }
     }
     private void Hook_Control(){
-        if (gamepad2.right_bumper || hookDown) { //down?
+        if (gamepad2.right_bumper || hookDown) {
             tim = getRuntime();
             Hook.setPower(0.5);
             hookDown = false;
         }
-        if (gamepad2.left_bumper || hookUp) { //up?
+        if (gamepad2.left_bumper || hookUp) {
             tim = getRuntime();
             Hook.setPower(-0.5);
             hookUp = false;
@@ -308,7 +333,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             }
         }
         if (gamepad2.right_trigger > 0.1 && !rightTrigger2Pressed) {
-            sweeper = 1 - sweeper;
+            sweeper = openSweeper - sweeper;
             Sweeper.setPosition(sweeper);
 //            manual = true;
         }
@@ -400,11 +425,11 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             manual = false;
         }
         if (gamepad1.y && gamepad1.left_bumper){
-            target1 = highBasket;
+            target1 = highBasket1;
             target2 = highBasket2;
         }
         else if (gamepad1.y) {//high basket
-            target1 = highBasket;
+            target1 = highBasket1;
             target2 = highBasket2;
 //            Targeting_Angle = -45; //(add this?)
             stateTime = getRuntime();
@@ -412,7 +437,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             manual = false;
         }
         if (gamepad1.a) {//floor
-            target1 = floor;
+            target1 = floor1;
             target2 = floor2;
             Lift_Power = 0.25;
             state = "floor";
@@ -433,18 +458,18 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             manual = false;
         }
         if (gamepad1.start && gamepad1.left_bumper){
-            target1 = 8.1777;
-            target2 = 154.721207477;
+            target1 = sub1;
+            target2 = sub2;
         }
         else if (gamepad1.start) { //into submersible (not needed bc wall preset?)
-            target1 = 8.1777; //6.4322;
-            target2 = 154.721207477;
+            target1 = sub1; //6.4322;
+            target2 = sub2;
             stateTime = getRuntime();
             state = "enterSub";
             manual = false;
         }
         if (gamepad1.right_stick_button){ //retract both arms
-            target1 = down;
+            target1 = down1;
             target2 = down2;
         }
         if (gamepad1.right_stick_y < -0.95) { //manual control of ARM1
@@ -508,15 +533,16 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
         target2 = ARM2.getCurrentPosition()/ticks_in_degree_2;
         telemetry.addData("Claw",Claw.getPosition());
         telemetry.update();
-        Claw.scaleRange(0.45,1);
-        Claw_Angle.scaleRange(0.04, 0.7);
-        Sweeper.scaleRange(0.085,0.45); //0.482
+        Claw.scaleRange(clawScale0,clawScale1);
+        Intake_Angle.scaleRange(intake_AngleScale0, intake_AngleScale1);
+        Claw_Angle.scaleRange(claw_AngleScale0, claw_AngleScale1);
+        Sweeper.scaleRange(sweeperScale0,sweeperScale1); //0.482
 
         Motor_Power = 0.5;
 
         pinpoint.recalibrateIMU();
         pinpoint.update();
-        Targeting_Angle = pinpoint.getHeading();
+        Targeting_Angle = Math.toDegrees(pinpoint.getHeading());
 
         waitForStart();
     }
@@ -527,7 +553,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     private void Calculate_IMU_Rotation_Power() {
         double Angle_Difference;
 
-        Heading_Angle = pinpoint.getHeading(); //degrees
+        Heading_Angle = Math.toDegrees(pinpoint.getHeading()); //degrees
         if (Math.abs(gamepad1.right_stick_x) >= 0.01) {
             imu_rotation = 0;
             Targeting_Angle = Heading_Angle;

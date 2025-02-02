@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Subsystem_Constants;
 import org.firstinspires.ftc.teamcode.TunePID;
 
 public class ARM2_V2Robot {
@@ -27,15 +28,15 @@ public class ARM2_V2Robot {
     private final double x2 = 26.4;
     private final double m1 = 810;
     private final double m2 = 99.79;
-    private final double highBasket2 = 131.0525;
-    final double highRung2 = 91-0.722; //91; //90.7355; //90.2924; // 88.72; //87.1025; //90.381; //91.7102;//94.457; //90.381; //92.6;
-    final double highRung2_2 = 38.3676; //37.1271; //31.1093;
-    private final double wall2 = 156.4382; //157.9896;// 154.8883; //157.0149; //154.8883; //156.749
-    private final double wall2_2 = 168.9771;
-    private final double lowBasket2 = 50; //not tested
-    private final double floor2 = 159.8503;
-    private final double down2 = 10.0199819357;
-    private final double sub2 = 154.721207477;
+    private final double highBasket2 = Subsystem_Constants.highBasket2;
+    final double highRung2 = Subsystem_Constants.highRung2;
+    final double highRung2_2 = Subsystem_Constants.highRung2_2;
+    private final double wall2 = Subsystem_Constants.wall2;
+    private final double wall2_2 = Subsystem_Constants.wall2_2;
+    private final double lowBasket2 = Subsystem_Constants.lowBasket2;
+    private final double floor2 = Subsystem_Constants.floor2;
+    private final double down2 = Subsystem_Constants.down2;
+    private final double sub2 = Subsystem_Constants.sub2;
 
     public ARM2_V2Robot(HardwareMap hardwareMap) {
         arm2 = hardwareMap.get(DcMotor.class, "ARM2");
