@@ -28,7 +28,7 @@ public class ARM2_V2Robot {
     private final double x2 = 26.4;
     private final double m1 = 810;
     private final double m2 = 99.79;
-    private final double highBasket2 = Subsystem_Constants.highBasket2;
+    private final double highBasket2 = Subsystem_Constants.highBasket2_auto;
     final double highRung2 = Subsystem_Constants.highRung2;
     final double highRung2_2 = Subsystem_Constants.highRung2_2;
     private final double wall2 = Subsystem_Constants.wall2;

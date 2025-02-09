@@ -13,13 +13,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.PinpointDrive_Left;
 
 @Autonomous(name = "AUTONLEFT_V2Robot")
 public class AUTON2025REDLEFT_V2Robot extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
         Pose2d initialPose = new Pose2d(0, 92, Math.toRadians(0));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
+        PinpointDrive_Left drive = new PinpointDrive_Left(hardwareMap, initialPose);
         ARM1_V2Robot arm1 = new ARM1_V2Robot(hardwareMap);
         ARM2_V2Robot arm2 = new ARM2_V2Robot(hardwareMap);
         CLAW_LEFT claw = new CLAW_LEFT(hardwareMap);

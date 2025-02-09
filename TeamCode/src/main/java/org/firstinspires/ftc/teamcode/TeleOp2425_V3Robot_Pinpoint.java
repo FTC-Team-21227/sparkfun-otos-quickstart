@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.Subsystem_Constants;
+import org.firstinspires.ftc.teamcode.autons.PoseStorage;
 
 @TeleOp(name = "TeleOp2425_V3Robot_Pinpoint")
 public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
@@ -45,7 +47,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     private final double down1 = Subsystem_Constants.down1;
     private final double sub1 = Subsystem_Constants.sub1;
 
-    private final double highBasket2 = Subsystem_Constants.highBasket2;
+    private final double highBasket2 = Subsystem_Constants.highBasket2_teleop;
     final double highRung2 = Subsystem_Constants.highRung2;
     final double highRung2_2 = Subsystem_Constants.highRung2_2;
     private final double wall2 = Subsystem_Constants.wall2;
@@ -63,7 +65,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     final double intake_AngleScale0 = Subsystem_Constants.intake_AngleScale0;
     final double intake_AngleScale1 = Subsystem_Constants.intake_AngleScale1;
     final double intake_AngleFloor = Subsystem_Constants.intake_AngleFloor;
-    final double intake_AngleBasket = Subsystem_Constants.intake_AngleBasket;
+    final double intake_AngleBasket = Subsystem_Constants.intake_AngleBasket_teleop;
     final double intake_AngleRung = Subsystem_Constants.intake_AngleRung;
     final double intake_AngleStart = Subsystem_Constants.intake_AngleStart;
     final double intake_AngleWall = Subsystem_Constants.intake_AngleWall;
@@ -128,12 +130,23 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     double servoResetTime;
     double Lift_Power = 1;
     double currTime = 0;
+    double initialHeading;
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
     @Override
     public void runOpMode() throws InterruptedException{
         //getting all the motors, servos, and sensors from the hardware map
+        Pose2d initialPose;
+        try {
+            initialPose = PoseStorage.currentPose;
+            telemetry.addData("Yay1!","Yay1!");
+        }
+        catch (Exception e){
+            initialPose = new Pose2d(0,0,0);
+            telemetry.addData("No!","No!");
+        }
+        initialHeading = Math.toDegrees(initialPose.heading.toDouble());
         W_BL = hardwareMap.get(DcMotor.class, "W_BL");
         W_BR = hardwareMap.get(DcMotor.class, "W_BR");
         W_FR = hardwareMap.get(DcMotor.class, "W_FR");
@@ -187,6 +200,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
                 //reset imu if necessary
                 if (gamepad1.back) {
                     pinpoint.resetPosAndIMU();
+                    initialHeading = 0;
                     Targeting_Angle = 0;
                     Heading_Angle = 0;
                 }
@@ -285,7 +299,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
                 intake_angle = intake_AngleFloor;
             }
             else if (intake_angle == intake_AngleFloor){
-                intake_angle = intake_AngleFloor;
+                intake_angle = intake_AngleWall;
             }
             Intake_Angle.setPosition(intake_angle);
             manual = true;
@@ -540,9 +554,9 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
 
         Motor_Power = 0.5;
 
-        pinpoint.recalibrateIMU();
-        pinpoint.update();
-        Targeting_Angle = Math.toDegrees(pinpoint.getHeading());
+        pinpoint.resetPosAndIMU();
+//        pinpoint.update();
+        Targeting_Angle = initialHeading;
 
         waitForStart();
     }
@@ -553,7 +567,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     private void Calculate_IMU_Rotation_Power() {
         double Angle_Difference;
 
-        Heading_Angle = Math.toDegrees(pinpoint.getHeading()); //degrees
+        Heading_Angle = Math.toDegrees(pinpoint.getHeading())+initialHeading; //degrees
         if (Math.abs(gamepad1.right_stick_x) >= 0.01) {
             imu_rotation = 0;
             Targeting_Angle = Heading_Angle;
@@ -583,24 +597,24 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
         double mag;
         double x;
         double y;
-        if (!(gamepad1.right_trigger>0.1)) {
-            x = gamepad1.left_stick_x;
-            y = gamepad1.left_stick_y;
-            mag = Math.sqrt(y*y + x*x);
-            Motor_FWD_input = y * mag;
-            Motor_Side_input = -x * mag;
-            Motor_fwd_power = Math.cos(Heading_Angle / 180 * Math.PI) * Motor_FWD_input - Math.sin(Heading_Angle / 180 * Math.PI) * Motor_Side_input;
-            Motor_side_power = (Math.cos(Heading_Angle / 180 * Math.PI) * Motor_Side_input + Math.sin(Heading_Angle / 180 * Math.PI) * Motor_FWD_input) * 1.5;
-            Motor_Rotation_power = gamepad1.right_stick_x * 0.7 + imu_rotation; //0.5
-            Motor_power_BL = -(((Motor_fwd_power - Motor_side_power) - Motor_Rotation_power) * Motor_Power);
-            Motor_power_BR = -((Motor_fwd_power + Motor_side_power + Motor_Rotation_power) * Motor_Power);
-            Motor_power_FL = -(((Motor_fwd_power + Motor_side_power) - Motor_Rotation_power) * Motor_Power);
-            Motor_power_FR = (((Motor_fwd_power - Motor_side_power) + Motor_Rotation_power) * Motor_Power);
-        } else {
-            Motor_power_BR = 0;
-            Motor_power_BL = 0;
-            Motor_power_FL = 0;
-            Motor_power_FR = 0;
-        }
+//        if (!(gamepad1.right_trigger>0.1)) {
+        x = gamepad1.left_stick_x;
+        y = gamepad1.left_stick_y;
+        mag = Math.sqrt(y*y + x*x);
+        Motor_FWD_input = y * mag;
+        Motor_Side_input = -x * mag;
+        Motor_fwd_power = Math.cos(Heading_Angle / 180 * Math.PI) * Motor_FWD_input - Math.sin(Heading_Angle / 180 * Math.PI) * Motor_Side_input;
+        Motor_side_power = (Math.cos(Heading_Angle / 180 * Math.PI) * Motor_Side_input + Math.sin(Heading_Angle / 180 * Math.PI) * Motor_FWD_input) * 1.2;
+        Motor_Rotation_power = gamepad1.right_stick_x * 0.7 + imu_rotation; //0.5
+        Motor_power_BL = -(((Motor_fwd_power - Motor_side_power) - Motor_Rotation_power) * Motor_Power);
+        Motor_power_BR = -((Motor_fwd_power + Motor_side_power + Motor_Rotation_power) * Motor_Power);
+        Motor_power_FL = -(((Motor_fwd_power + Motor_side_power) - Motor_Rotation_power) * Motor_Power);
+        Motor_power_FR = (((Motor_fwd_power - Motor_side_power) + Motor_Rotation_power) * Motor_Power);
+//        } else {
+//            Motor_power_BR = 0;
+//            Motor_power_BL = 0;
+//            Motor_power_FL = 0;
+//            Motor_power_FR = 0;
+//        }
     }
 }

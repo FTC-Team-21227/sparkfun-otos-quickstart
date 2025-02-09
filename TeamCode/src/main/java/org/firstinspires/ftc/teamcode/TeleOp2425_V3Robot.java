@@ -19,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.autons.PoseStorage;
 
-@TeleOp(name = "TeleOp2425_V3Robot")
+//@TeleOp(name = "TeleOp2425_V3Robot")
 public class TeleOp2425_V3Robot extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
     private PIDController controller1;
