@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.autons.PoseStorage;
 
-@TeleOp(name = "TeleOp2425_V3Robot_Pinpoint")
-public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
+//@TeleOp(name = "TeleOp2425_V3Robot_Pinpoint_RunToPos")
+public class TeleOp2425_V3Robot_Pinpoint_RunToPos extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
     private PIDController controller1;
     private PIDController controller2;
@@ -97,7 +97,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     private TouchSensor ARM2Sensor;
     double Heading_Angle;
     double Motor_power_BR;
-    double imu_rotation;
+    int imu_rotation;
     double Motor_power_BL;
     double Targeting_Angle;
     double Motor_fwd_power;
@@ -138,6 +138,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException{
         //getting all the motors, servos, and sensors from the hardware map
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
         Pose2d initialPose;
         try {
             initialPose = PoseStorage.currentPose;
@@ -304,11 +305,11 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
         }
         rightTriggerPressed = gamepad1.right_trigger > 0.1;
         if (gamepad1.left_trigger > 0.1 && !leftTriggerPressed && intake_angle < 3) {
-            if (intake_angle == intake_AngleFloor){
-                intake_angle = intake_AngleVertical;
-            }
-            else{
+            if (intake_angle == intake_AngleWall){
                 intake_angle = intake_AngleFloor;
+            }
+            else if (intake_angle == intake_AngleFloor){
+                intake_angle = intake_AngleWall;
             }
             Intake_Angle.setPosition(intake_angle);
             manual = true;
@@ -363,25 +364,29 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
         rightTrigger2Pressed = gamepad2.right_trigger > 0.1;
     }
     private void ARM_PID_Control(){
-        if (!state.equals("floor")){
-            Lift_Power = 1;
-        }
-        controller1.setPID(p1,i1,d1);
-        arm1Pos = ARM1.getCurrentPosition();
-        double pid1 = controller1.calculate(arm1Pos,(int)(target1*ticks_in_degree_1)); //PID calculation
-        double ff1 = (m1*Math.cos(Math.toRadians(target1))*x1 +
-        m2*Math.cos(Math.atan(((x2*Math.sin(Math.toRadians(target1+target2)))+(L1*Math.sin(Math.toRadians(target1))))/((L1*Math.cos(Math.toRadians(target1)))+(x2*Math.cos(Math.toRadians(target1+target2))))))*
-        Math.sqrt(Math.pow((x2*Math.sin(Math.toRadians(target1+target2))+L1*Math.sin(Math.toRadians(target1))),2)+Math.pow((x2*Math.cos(Math.toRadians(target1+target2))+L1*Math.cos(Math.toRadians(target1))),2))) * f1; // feedforward calculation, change when equation is derived
-        double power1 = pid1 + ff1;
-        //telemetry.addData("ff1",ff1);
-        ARM1.setPower(power1*Lift_Power); //set the power
-
-        controller2.setPID(p2,i2,d2);
-        arm2Pos = ARM2.getCurrentPosition();
-        double pid2 = controller2.calculate(arm2Pos, (int)(target2*ticks_in_degree_2));
-        double ff2 = (m2*Math.cos(Math.toRadians(target1+target2))*x2) * f2; //feedforward calculation, change when equation is derived
-        double power2 = pid2 + ff2;
-        ARM2.setPower(power2);
+//        if (!state.equals("floor")){
+//            Lift_Power = 1;
+//        }
+//        controller1.setPID(p1,i1,d1);
+//        arm1Pos = ARM1.getCurrentPosition();
+//        double pid1 = controller1.calculate(arm1Pos,(int)(target1*ticks_in_degree_1)); //PID calculation
+//        double ff1 = (m1*Math.cos(Math.toRadians(target1))*x1 +
+//        m2*Math.cos(Math.atan(((x2*Math.sin(Math.toRadians(target1+target2)))+(L1*Math.sin(Math.toRadians(target1))))/((L1*Math.cos(Math.toRadians(target1)))+(x2*Math.cos(Math.toRadians(target1+target2))))))*
+//        Math.sqrt(Math.pow((x2*Math.sin(Math.toRadians(target1+target2))+L1*Math.sin(Math.toRadians(target1))),2)+Math.pow((x2*Math.cos(Math.toRadians(target1+target2))+L1*Math.cos(Math.toRadians(target1))),2))) * f1; // feedforward calculation, change when equation is derived
+//        double power1 = pid1 + ff1;
+//        //telemetry.addData("ff1",ff1);
+//        ARM1.setPower(power1*Lift_Power); //set the power
+//
+//        controller2.setPID(p2,i2,d2);
+//        arm2Pos = ARM2.getCurrentPosition();
+//        double pid2 = controller2.calculate(arm2Pos, (int)(target2*ticks_in_degree_2));
+//        double ff2 = (m2*Math.cos(Math.toRadians(target1+target2))*x2) * f2; //feedforward calculation, change when equation is derived
+//        double power2 = pid2 + ff2;
+//        ARM2.setPower(power2);
+        ARM1.setTargetPosition((int)(target1*ticks_in_degree_1));
+        ARM2.setTargetPosition((int)(target2*ticks_in_degree_2));
+        ARM1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ARM2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     private void ARM_Calibration(){
         //resets each motor to 0 when the touch sensor is pressed, and doesn't enter the if statement afterwards
@@ -479,7 +484,6 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             stateTime = getRuntime();
             state = "wall";
             manual = false;
-            Targeting_Angle = -175;
         }
         if (gamepad1.start && gamepad1.left_bumper){
             target1 = sub1;
@@ -528,7 +532,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
         controller1 = new PIDController(p1, i1, d1);
         controller2 = new PIDController(p2, i2, d2);
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         W_FR.setDirection(DcMotor.Direction.REVERSE);
         W_FL.setDirection(DcMotor.Direction.REVERSE);
@@ -597,9 +601,9 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             if (Math.abs(Angle_Difference) < 1) {
                 imu_rotation = 0;
             } else if (Angle_Difference >= 1) {
-                imu_rotation = (Angle_Difference * 0.01 + 0.1);
+                imu_rotation = (int) (Angle_Difference * 0.01 + 0.1);
             } else {
-                imu_rotation = (Angle_Difference * 0.01 - 0.1);
+                imu_rotation = (int) (Angle_Difference * 0.01 - 0.1);
             }
         }
     }

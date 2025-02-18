@@ -50,7 +50,7 @@ public class AUTON2025REDLEFT_V3Robot_2 extends LinearOpMode{
                     X += 0.1;
                 }
                 else {
-                    X += 10 * X + 1;
+                    X = 10 * X + 1;
                 }
             }
             a = gamepad1.a;
@@ -58,63 +58,63 @@ public class AUTON2025REDLEFT_V3Robot_2 extends LinearOpMode{
                 if (decimal){
                     X += 0.2;
                 }
-                else {X += 10*X+2;}
+                else {X = 10*X+2;}
             }
             b = gamepad1.b;
             if (gamepad1.x && !x){
                 if (decimal){
                     X += 0.3;
                 }
-                else {X += 10*X+3;}
+                else {X = 10*X+3;}
             }
             x = gamepad1.x;
             if (gamepad1.y && !y){
                 if (decimal){
                     X += 0.4;
                 }
-                else {X += 10*X+4;}
+                else {X = 10*X+4;}
             }
             y = gamepad1.y;
             if (gamepad1.dpad_up && !up){
                 if (decimal){
                     X += 0.5;
                 }
-                else {X += 10*X+5;}
+                else {X = 10*X+5;}
             }
             up = gamepad1.dpad_up;
             if (gamepad1.dpad_down && !down){
                 if (decimal){
                     X += 0.6;
                 }
-                else {X += 10*X+6;}
+                else {X = 10*X+6;}
             }
             down = gamepad1.dpad_down;
             if (gamepad1.dpad_left && !left){
                 if (decimal){
                     X += 0.7;
                 }
-                else {X += 10*X+7;}
+                else {X = 10*X+7;}
             }
             left = gamepad1.dpad_left;
             if (gamepad1.dpad_right && !right){
                 if (decimal){
                     X += 0.8;
                 }
-                else {X += 10*X+8;}
+                else {X = 10*X+8;}
             }
             right = gamepad1.dpad_right;
             if (gamepad1.right_bumper && !RB){
                 if (decimal){
                     X += 0.9;
                 }
-                else {X += 10*X+9;}
+                else {X = 10*X+9;}
             }
             RB = gamepad1.right_bumper;
             if (gamepad1.left_bumper && !LB){
                 if (decimal){
                     X += 0.0;
                 }
-                else {X += 10*X+0;}
+                else {X = 10*X+0;}
             }
             LB = gamepad1.left_bumper;
             if (gamepad1.left_stick_button && !LS){
@@ -141,15 +141,16 @@ public class AUTON2025REDLEFT_V3Robot_2 extends LinearOpMode{
             telemetry.addLine("a=1, b=2, x=3, y=4, up=5, down=6, left=7, right=8, RB=9, LB=0, back=decimal, Left Stick Button = negative,  start = continue, Right Stick Button = erase");
             telemetry.update();
         }
-        int Y = 0;
+        double Y = 0;
         cont = true;
+        back = false;
         while (cont && !isStopRequested()){
             if (gamepad1.a && !a){
                 if (decimal){
                     Y += 0.1;
                 }
                 else {
-                    Y += 10 * Y + 1;
+                    Y = 10 * Y + 1;
                 }
             }
             a = gamepad1.a;
@@ -157,63 +158,63 @@ public class AUTON2025REDLEFT_V3Robot_2 extends LinearOpMode{
                 if (decimal){
                     Y += 0.2;
                 }
-                else {Y += 10*Y+2;}
+                else {Y = 10*Y+2;}
             }
             b = gamepad1.b;
             if (gamepad1.x && !x){
                 if (decimal){
                     Y += 0.3;
                 }
-                else {Y += 10*Y+3;}
+                else {Y = 10*Y+3;}
             }
             x = gamepad1.x;
             if (gamepad1.y && !y){
                 if (decimal){
                     Y += 0.4;
                 }
-                else {Y += 10*Y+4;}
+                else {Y = 10*Y+4;}
             }
             y = gamepad1.y;
             if (gamepad1.dpad_up && !up){
                 if (decimal){
                     Y += 0.5;
                 }
-                else {Y += 10*Y+5;}
+                else {Y = 10*Y+5;}
             }
             up = gamepad1.dpad_up;
             if (gamepad1.dpad_down && !down){
                 if (decimal){
                     Y += 0.6;
                 }
-                else {Y += 10*Y+6;}
+                else {Y = 10*Y+6;}
             }
             down = gamepad1.dpad_down;
             if (gamepad1.dpad_left && !left){
                 if (decimal){
                     Y += 0.7;
                 }
-                else {Y += 10*Y+7;}
+                else {Y = 10*Y+7;}
             }
             left = gamepad1.dpad_left;
             if (gamepad1.dpad_right && !right){
                 if (decimal){
                     Y += 0.8;
                 }
-                else {Y += 10*Y+8;}
+                else {Y = 10*Y+8;}
             }
             right = gamepad1.dpad_right;
             if (gamepad1.right_bumper && !RB){
                 if (decimal){
                     Y += 0.9;
                 }
-                else {Y += 10*Y+9;}
+                else {Y = 10*Y+9;}
             }
             RB = gamepad1.right_bumper;
             if (gamepad1.left_bumper && !LB){
                 if (decimal){
                     Y += 0.0;
                 }
-                else {Y += 10*Y+0;}
+                else {Y = 10*Y+0;}
             }
             LB = gamepad1.left_bumper;
             if (gamepad1.back && !back){
@@ -253,45 +254,47 @@ public class AUTON2025REDLEFT_V3Robot_2 extends LinearOpMode{
                 .strafeToLinearHeading(new Vector2d(8, 112.5), Math.toRadians(-45));// loaded sample go to basket
         TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(8, 112.5, Math.toRadians(-45)))
                 .waitSeconds(0.5)
-                .strafeToLinearHeading(new Vector2d(8.7, 107), Math.toRadians(0)); //get 1st sample from the left side
+                .strafeToLinearHeading(new Vector2d(8.4, 107), Math.toRadians(0)); //get 1st sample from the left side
 //                .strafeTo(new Vector2d(10.5, 109.5)); //get 1st sample
-        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(8.7, 107, Math.toRadians(0)))
+        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(8.4, 107, Math.toRadians(0)))
                 .waitSeconds(1)
                 .strafeToLinearHeading(new Vector2d(8, 112.5), Math.toRadians(-45)) //go away from wall bec arms lifting
                 .waitSeconds(0.7);
         TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(8, 112.5, Math.toRadians(-45)))
                 .waitSeconds(0.5)
-                .strafeToLinearHeading(new Vector2d(9.3, 118.25), Math.toRadians(1.5)); //get 2nd sample from the left side
+                .strafeToLinearHeading(new Vector2d(8.4, 118.25), Math.toRadians(1.5)); //get 2nd sample from the left side
 //                .strafeTo(new Vector2d(10.5, 119.5)); //get 1st sample
-        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(9.3, 118.25, Math.toRadians(0)))
+        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(8.4, 118.25, Math.toRadians(0)))
                 .waitSeconds(1)
                 .strafeToLinearHeading(new Vector2d(8, 112.5), Math.toRadians(-45)) //go away from wall bec arms lifting
                 .waitSeconds(0.7);
         TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(8, 112.5, Math.toRadians(-45)))
                 .waitSeconds(0.5)
                 .strafeToLinearHeading(new Vector2d(10,118),Math.toRadians(10))
+                .waitSeconds(0.3)
                 .turnTo(Math.toRadians(28)); //get 3rd sample from the left side
 //                .strafeTo(new Vector2d(10.5, 122.5)); //get 1st sample
         TrajectoryActionBuilder tab8 = drive.actionBuilder(new Pose2d(10,118, drive.pose.heading.toDouble()))
                 .waitSeconds(1)
-                .strafeToLinearHeading(new Vector2d(8, 112.5), Math.toRadians(-45)) //go away from wall bec arms lifting
+                .strafeToLinearHeading(new Vector2d(7, 113.5), Math.toRadians(-45)) //go away from wall bec arms lifting
                 .waitSeconds(0.7);
-        TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(8, 112.5, Math.toRadians(-45)))
+        TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(7, 113.5, Math.toRadians(-45)))
                 .waitSeconds(0.5)
                 .strafeToSplineHeading(new Vector2d(64.5+Y,105),Math.toRadians(-90), new TranslationalVelConstraint(70))
 //                .waitSeconds(1.5) //get 4th sample from the sub
-                .strafeTo(new Vector2d(64.5+Y, 94-X), new TranslationalVelConstraint(70)); //get 4th sample
-        TrajectoryActionBuilder tab10 = drive.actionBuilder(new Pose2d(64.5+Y,94-X, Math.toRadians(-90)))
+                .strafeTo(new Vector2d(64.5+Y, 94-X), new TranslationalVelConstraint(30)) //get 4th sample
+                .strafeTo(new Vector2d(64.5+Y-2,94-X),new TranslationalVelConstraint(30));
+        TrajectoryActionBuilder tab10 = drive.actionBuilder(new Pose2d(64.5+Y-2,94-X, Math.toRadians(-90)))
                 .setTangent(Math.toRadians(180))
-                .waitSeconds(1)
-                .splineToConstantHeading(new Vector2d(64.5,100),Math.toRadians(180), new TranslationalVelConstraint(70))
-                .splineToSplineHeading(new Pose2d(8, 112.5, Math.toRadians(-45)), Math.toRadians(-45),new TranslationalVelConstraint(70)) //go away from wall bec arms lifting
-                .waitSeconds(0.7);
-        TrajectoryActionBuilder tab11 = drive.actionBuilder(new Pose2d(8.5, 112, Math.toRadians(-45)))
-                .setTangent(Math.toRadians(45))
                 .waitSeconds(0.5)
-                .splineToSplineHeading(new Pose2d(52.5, 94, Math.toRadians(-90)),Math.toRadians(0),new TranslationalVelConstraint(70))//avoid bumping into submersible
-                .splineToConstantHeading(new Vector2d(52.5, 89),Math.toRadians(0),new TranslationalVelConstraint(15)); //touch bar
+                .splineToConstantHeading(new Vector2d(64.5,100),Math.toRadians(180), new TranslationalVelConstraint(70))
+                .splineToSplineHeading(new Pose2d(5, 107, Math.toRadians(-45)), Math.toRadians(165),new TranslationalVelConstraint(70)) //go away from wall bec arms lifting
+                .waitSeconds(0.7);
+        TrajectoryActionBuilder tab11 = drive.actionBuilder(new Pose2d(5,107,Math.toRadians(-45)))
+                .setTangent(Math.toRadians(0))
+                .waitSeconds(0.5)
+                .splineToSplineHeading(new Pose2d(52.5, 105, Math.toRadians(-90)),Math.toRadians(0),new TranslationalVelConstraint(70))//avoid bumping into submersible
+                .splineToConstantHeading(new Vector2d(52.5, 87),Math.toRadians(0),new TranslationalVelConstraint(15)); //touch bar
 
 
 
@@ -384,23 +387,23 @@ public class AUTON2025REDLEFT_V3Robot_2 extends LinearOpMode{
                 claw.openClaw(),
                 new ParallelAction(
                     ninthTrajectory,
-                    claw_angle.sub(0.5),
+                    claw_angle.forward(0.5),
                     claw.openClaw(0.5),
                     intake_angle.RotatePosition2(2),
-                    arm1.waitLiftWall(0.3),
-//                    arm2.waitLiftWall(1.5),
-                    arm1.waitLiftDown(4,0.7, 0.2),
-                    arm2.waitLiftSub(4,0.7)
+                    arm1.waitLiftVertSub(0.3),
+                    arm2.waitLiftVertSub(0.3),
+                    arm1.waitLiftVertFloor(4,0.7, 0.2)
+//                    arm2.waitLiftVertFloor(4,0.7)
                 ),
-                new ParallelAction(
-                    claw.closeClaw(),
-                    claw_angle.forward()
-                ),
+//                new ParallelAction(
+                claw.closeClaw(),
+//                    claw_angle.forward()
+//                ),
                 new ParallelAction(
                     tenthTrajectory,
-                    intake_angle.RotatePosition0_basket(1),
-                    arm1.waitLiftWall(0.5),
-                    arm2.waitLiftWall(0.5),
+                    intake_angle.RotatePosition0_basket(0.3),
+                    arm1.waitLiftVertSub(0.3),
+//                    arm2.waitLiftWall(0.2),
                     claw_angle.backward(1.5),
                     arm1.waitLiftHighBasket(2,1.8),
                     arm2.waitLiftHighBasket(2,1.8)
@@ -410,7 +413,7 @@ public class AUTON2025REDLEFT_V3Robot_2 extends LinearOpMode{
                     intake_angle.RotatePosition0_left(0.8),
                     claw_angle.forward(0.8),
                     eleventhTrajectory,
-                    arm1.waitLiftWall(1.2)
+                    arm1.waitLiftWallWall(0.3)
 //                    arm2.waitLift(1.2)
                 )
             )

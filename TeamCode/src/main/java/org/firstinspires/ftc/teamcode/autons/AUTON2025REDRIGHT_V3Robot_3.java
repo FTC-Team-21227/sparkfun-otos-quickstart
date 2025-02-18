@@ -152,14 +152,14 @@ public class AUTON2025REDRIGHT_V3Robot_3 extends LinearOpMode {
                             fifthTrajectory,
                             arm1.waitLiftWall2(1.5,1.5),
                             arm2.waitLiftWall2(1.5,1.5),
-                            claw_angle.backward(1.5),
-                            intake_angle.RotatePositionNegative1(2),
-                            sweeper.RotatePosition1(2.8)
+                            claw_angle.backward(1),
+                            intake_angle.RotatePositionNegative1(1.5),
+                            sweeper.RotatePosition0(2.3)
                         ),
                         claw.closeClaw(),
                         //pick up and place second specimen
                         new ParallelAction(
-                            sweeper.RotatePosition0(0.5),
+                            sweeper.RotatePosition1(0.5),
                             arm1.waitLiftRung2(0.3),
                             arm2.waitLiftRung2(0.3),
                             sixthTrajectory,

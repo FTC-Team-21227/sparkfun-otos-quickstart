@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.PinpointDrive_Left;
 
-//@Autonomous(name = "AUTONLEFT_V3Robot_5sample")
+@Autonomous(name = "AUTONLEFT_V3Robot_4sample")
 //5 sample auto
 public class AUTON2025REDLEFT_V3Robot extends LinearOpMode{
     @Override
@@ -27,216 +27,6 @@ public class AUTON2025REDLEFT_V3Robot extends LinearOpMode{
         INTAKE_ANGLE_NEW intake_angle = new INTAKE_ANGLE_NEW(hardwareMap);
         CLAW_ANGLE_NEW claw_angle = new CLAW_ANGLE_NEW(hardwareMap);
         SWEEPER sweeper = new SWEEPER(hardwareMap);
-
-        double X = 0;
-        boolean cont = true;
-        boolean a = false;
-        boolean b= false;
-        boolean x= false;
-        boolean y= false;
-        boolean up= false;
-        boolean down= false;
-        boolean left= false;
-        boolean right= false;
-        boolean RB= false;
-        boolean LB= false;
-        boolean back= false;
-        boolean decimal = false;
-        boolean right_stick_button = false;
-        boolean start= false;
-        while (cont){
-            if (gamepad1.a && !a){
-                if (decimal){
-                    X += 0.1;
-                }
-                else {
-                    X += 10 * X + 1;
-                }
-            }
-            a = gamepad1.a;
-            if (gamepad1.b && !b){
-                if (decimal){
-                    X += 0.2;
-                }
-                else {X += 10*X+2;}
-            }
-            b = gamepad1.b;
-            if (gamepad1.x && !x){
-                if (decimal){
-                    X += 0.3;
-                }
-                else {X += 10*X+3;}
-            }
-            x = gamepad1.x;
-            if (gamepad1.y && !y){
-                if (decimal){
-                    X += 0.4;
-                }
-                else {X += 10*X+4;}
-            }
-            y = gamepad1.y;
-            if (gamepad1.dpad_up && !up){
-                if (decimal){
-                    X += 0.5;
-                }
-                else {X += 10*X+5;}
-            }
-            up = gamepad1.dpad_up;
-            if (gamepad1.dpad_down && !down){
-                if (decimal){
-                    X += 0.6;
-                }
-                else {X += 10*X+6;}
-            }
-            down = gamepad1.dpad_down;
-            if (gamepad1.dpad_left && !left){
-                if (decimal){
-                    X += 0.7;
-                }
-                else {X += 10*X+7;}
-            }
-            left = gamepad1.dpad_left;
-            if (gamepad1.dpad_right && !right){
-                if (decimal){
-                    X += 0.8;
-                }
-                else {X += 10*X+8;}
-            }
-            right = gamepad1.dpad_right;
-            if (gamepad1.right_bumper && !RB){
-                if (decimal){
-                    X += 0.9;
-                }
-                else {X += 10*X+9;}
-            }
-            RB = gamepad1.right_bumper;
-            if (gamepad1.left_bumper && !LB){
-                if (decimal){
-                    X += 0.0;
-                }
-                else {X += 10*X+0;}
-            }
-            LB = gamepad1.left_bumper;
-            if (gamepad1.back && !back){
-                decimal = true;
-            }
-            back = gamepad1.back;
-            if (gamepad1.right_stick_button && !right_stick_button){
-                X = 0;
-                decimal = false;
-            }
-            right_stick_button = gamepad1.right_stick_button;
-            if (gamepad1.start && !start){
-                cont = false;
-            }
-            start = gamepad1.start;
-            telemetry.addData("Pos X ",X);
-            if (decimal){
-                telemetry.addData("In decimal mode ", "only 1 decimal place permitted");
-            }
-            telemetry.addLine("a=1, b=2, x=3, y=4, up=5, down=6, left=7, right=8, RB=9, LB=0, back=decimal, start = continue, Right Stick Button = erase");
-            telemetry.update();
-        }
-        int Y = 0;
-        cont = true;
-        while (cont){
-            if (gamepad1.a && !a){
-                if (decimal){
-                    Y += 0.1;
-                }
-                else {
-                    Y += 10 * Y + 1;
-                }
-            }
-            a = gamepad1.a;
-            if (gamepad1.b && !b){
-                if (decimal){
-                    Y += 0.2;
-                }
-                else {Y += 10*Y+2;}
-            }
-            b = gamepad1.b;
-            if (gamepad1.x && !x){
-                if (decimal){
-                    Y += 0.3;
-                }
-                else {Y += 10*Y+3;}
-            }
-            x = gamepad1.x;
-            if (gamepad1.y && !y){
-                if (decimal){
-                    Y += 0.4;
-                }
-                else {Y += 10*Y+4;}
-            }
-            y = gamepad1.y;
-            if (gamepad1.dpad_up && !up){
-                if (decimal){
-                    Y += 0.5;
-                }
-                else {Y += 10*Y+5;}
-            }
-            up = gamepad1.dpad_up;
-            if (gamepad1.dpad_down && !down){
-                if (decimal){
-                    Y += 0.6;
-                }
-                else {Y += 10*Y+6;}
-            }
-            down = gamepad1.dpad_down;
-            if (gamepad1.dpad_left && !left){
-                if (decimal){
-                    Y += 0.7;
-                }
-                else {Y += 10*Y+7;}
-            }
-            left = gamepad1.dpad_left;
-            if (gamepad1.dpad_right && !right){
-                if (decimal){
-                    Y += 0.8;
-                }
-                else {Y += 10*Y+8;}
-            }
-            right = gamepad1.dpad_right;
-            if (gamepad1.right_bumper && !RB){
-                if (decimal){
-                    Y += 0.9;
-                }
-                else {Y += 10*Y+9;}
-            }
-            RB = gamepad1.right_bumper;
-            if (gamepad1.left_bumper && !LB){
-                if (decimal){
-                    Y += 0.0;
-                }
-                else {Y += 10*Y+0;}
-            }
-            LB = gamepad1.left_bumper;
-            if (gamepad1.back && !back){
-                decimal = true;
-            }
-            back = gamepad1.back;
-            if (gamepad1.right_stick_button && !right_stick_button){
-                Y = 0;
-                decimal = false;
-            }
-            right_stick_button = gamepad1.right_stick_button;
-            if (gamepad1.start && !start){
-                cont = false;
-            }
-            start = gamepad1.start;
-            telemetry.addData("Pos Y ",Y);
-            if (decimal){
-                telemetry.addData("In decimal mode ", "only 1 decimal place permitted");
-            }
-            telemetry.addLine("a=1, b=2, x=3, y=4, up=5, down=6, left=7, right=8, RB=9, LB=0, back=decimal, start = continue, Right Stick Button = erase");
-            telemetry.update();
-        }
-
-        telemetry.addData("Pos X ",X);
-        telemetry.addData("Pos Y ",Y);
-        telemetry.addLine("If incorrect, stop and reinit");
-        telemetry.update();
 
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
                 .strafeTo(new Vector2d(10, 92))
@@ -269,16 +59,6 @@ public class AUTON2025REDLEFT_V3Robot extends LinearOpMode{
                 .waitSeconds(2)
                 .strafeToLinearHeading(new Vector2d(8, 112.5), Math.toRadians(-45)) //go away from wall bec arms lifting
                 .waitSeconds(0.7);
-        TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(8, 112.5, Math.toRadians(-45)))
-                .waitSeconds(0.5)
-                .strafeToSplineHeading(new Vector2d(63.5,105),Math.toRadians(-90))
-//                .waitSeconds(1.5) //get 4th sample from the sub
-                .strafeTo(new Vector2d(64.5+Y, 94-X)); //get 4th sample
-        TrajectoryActionBuilder tab10 = drive.actionBuilder(new Pose2d(64.5+Y,94-X, Math.toRadians(-90)))
-                .waitSeconds(2)
-                .strafeTo(new Vector2d(64.5,100))
-                .strafeToLinearHeading(new Vector2d(8, 112.5), Math.toRadians(-45)) //go away from wall bec arms lifting
-                .waitSeconds(0.7);
         TrajectoryActionBuilder tab11 = drive.actionBuilder(new Pose2d(8.5, 112, Math.toRadians(-45)))
                 .waitSeconds(0.5)
                 .strafeToSplineHeading(new Vector2d(52, 94), Math.toRadians(-90))//avoid bumping into submersible
@@ -303,8 +83,6 @@ public class AUTON2025REDLEFT_V3Robot extends LinearOpMode{
         Action sixthTrajectory = tab6.build();
         Action seventhTrajectory = tab7.build();
         Action eighthTrajectory = tab8.build();
-        Action ninthTrajectory = tab9.build();
-        Action tenthTrajectory = tab10.build();
         Action eleventhTrajectory = tab11.build();
         
         waitForStart();
@@ -374,30 +152,6 @@ public class AUTON2025REDLEFT_V3Robot extends LinearOpMode{
                 ),
                 claw.openClaw(),
                 new ParallelAction(
-                    ninthTrajectory,
-                    claw_angle.sub(1),
-                    claw.openClaw(0.5),
-                    intake_angle.RotatePosition2(2),
-                    arm1.waitLiftWall(1.5),
-//                    arm2.waitLiftWall(1.5),
-                    arm1.waitLiftDown(4.5,1, 0.2),
-                    arm2.waitLiftSub(4.5,1)
-                ),
-                new ParallelAction(
-                    claw.closeClaw(),
-                    claw_angle.forward()
-                ),
-                new ParallelAction(
-                    tenthTrajectory,
-                    intake_angle.RotatePosition0_basket(1.5),
-                    arm1.waitLiftWall(0.5),
-                    arm2.waitLiftWall(0.5),
-                    claw_angle.backward(1),
-                    arm1.waitLiftHighBasket(3.5),
-                    arm2.waitLiftHighBasket(3.5)
-                ),
-                claw.openClaw(),
-                new ParallelAction(
                     intake_angle.RotatePosition0_left(1),
                     claw_angle.forward(1),
                     eleventhTrajectory,
@@ -406,5 +160,6 @@ public class AUTON2025REDLEFT_V3Robot extends LinearOpMode{
                 )
             )
         );
+        PoseStorage.currentPose = drive.pose;
     }
 }

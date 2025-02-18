@@ -5,18 +5,23 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.autons.PoseStorage;
 
-@TeleOp(name = "TeleOp2425_V3Robot_Pinpoint")
-public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
+@TeleOp(name = "TeleOp2425_V3Robot_OldIMU_VerticalCapabilities")
+public class TeleOp2425_V3Robot_OldIMU_VerticalCapabilities extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
     private PIDController controller1;
     private PIDController controller2;
@@ -46,6 +51,8 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     private final double floor1 = Subsystem_Constants.floor1;
     private final double down1 = Subsystem_Constants.down1;
     private final double sub1 = Subsystem_Constants.sub1;
+    private final double vertSub1 = Subsystem_Constants.vertSub1;
+    private final double vertFloor1 = Subsystem_Constants.vertFloor1;
 
     private final double highBasket2 = Subsystem_Constants.highBasket2_teleop;
     final double highRung2 = Subsystem_Constants.highRung2;
@@ -56,6 +63,8 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     private final double floor2 = Subsystem_Constants.floor2;
     private final double down2 = Subsystem_Constants.down2;
     private final double sub2 = Subsystem_Constants.sub2;
+    private final double vertSub2 = Subsystem_Constants.vertSub2;
+    private final double vertFloor2 = Subsystem_Constants.vertFloor2;
 
     final double clawScale0 = Subsystem_Constants.clawScale0;
     final double clawScale1 = Subsystem_Constants.clawScale1;
@@ -85,7 +94,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     private DcMotor W_BR;
     private DcMotor W_FR;
     private DcMotor W_FL;
-    private GoBildaPinpointDriver pinpoint;
+    private IMU imu;
     private DcMotor ARM1; //bottom arm
     private DcMotor ARM2; //top arm
     private CRServo Hook;
@@ -152,7 +161,8 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
         W_BR = hardwareMap.get(DcMotor.class, "W_BR");
         W_FR = hardwareMap.get(DcMotor.class, "W_FR");
         W_FL = hardwareMap.get(DcMotor.class, "W_FL");
-        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
+//        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
+        imu = hardwareMap.get(IMU.class, "imu");
         ARM1 = hardwareMap.get(DcMotor.class, "ARM1");
         ARM2 = hardwareMap.get(DcMotor.class, "ARM2");
         Hook = hardwareMap.get(CRServo.class, "Hook");
@@ -173,7 +183,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             // Put run blocks here.
             while (opModeIsActive()) {
                 currTime = getRuntime();
-                pinpoint.update(/*GoBildaPinpointDriver.readData.ONLY_UPDATE_HEADING*/);
+//                pinpoint.update(/*GoBildaPinpointDriver.readData.ONLY_UPDATE_HEADING*/);
                 // Put loop blocks here.
                 Calculate_IMU_Rotation_Power(); //calculates each motor power based on IMU reading
                 Calculate_Motor_Power(); //calculates translational and rotational motor power
@@ -200,12 +210,9 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
                 Hook_Control();
                 //reset imu if necessary
                 if (gamepad1.back && !back) {
-                    pinpoint.resetPosAndIMU();
-                    try {
-                        Thread.sleep(300);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                    imu = hardwareMap.get(IMU.class, "imu");
+                    imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+                    imu.resetYaw();
                     initialHeading = 0;
                     Targeting_Angle = 0;
                     Heading_Angle = 0;
@@ -295,16 +302,39 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
                 telemetry.addData("In enter sub", "yes");
             }
         }
+        else if (state.equals("enterSubVert")) {
+            if (getRuntime() - stateTime > 0.25) {
+                if (claw_angle != claw_AngleForward) {
+                    Claw_Angle.setPosition(claw_AngleForward);
+                    claw_angle = claw_AngleForward;
+                }
+                telemetry.addData("In enter sub vert", "yes");
+            }
+        }
+        else if (state.equals("droppedHighBasket")) {
+            if (getRuntime() - stateTime > 0.1) {
+                if (intake_angle != intake_AngleBasket) {
+                    Intake_Angle.setPosition(intake_AngleBasket+0.2);
+                    intake_angle = intake_AngleBasket+0.2;
+                }
+                telemetry.addData("In dropped high basket", "yes");
+            }
+        }
     }
     private void Intake_Control(){
         if (gamepad1.right_trigger > 0.1 && !rightTriggerPressed) {
             claw = 1 - claw;
             Claw.setPosition(claw);
+            if (state.equals("highBasket")){
+                state = "droppedHighBasket";
+                stateTime = getRuntime();
+                manual = false;
+            }
 //            manual = true;
         }
         rightTriggerPressed = gamepad1.right_trigger > 0.1;
         if (gamepad1.left_trigger > 0.1 && !leftTriggerPressed && intake_angle < 3) {
-            if (intake_angle == intake_AngleFloor){
+            if (intake_angle == intake_AngleFloor || intake_angle == intake_AngleBasket+0.2){
                 intake_angle = intake_AngleVertical;
             }
             else{
@@ -404,8 +434,8 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             target2 = 0;
             ARM2calibrated = true;
         }
-        else if (!ARM2calibrated && ARM2.getPower() != -0.2){
-            ARM2.setPower(-0.2);
+        else if (!ARM2calibrated && ARM2.getPower() != -0.3){
+            ARM2.setPower(-0.3);
         }
         telemetry.addData("We Are Heree","yesd");
     }
@@ -414,7 +444,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             ARM1calibrated = false;
             ARM2calibrated = false;
             ARM1.setPower(-0.2);
-            ARM2.setPower(-0.2);
+            ARM2.setPower(-0.3);
         }
         if (gamepad2.a) { //prepare for hang
             target1 = 115.3484; //111.830920056; //111.330920056
@@ -460,10 +490,16 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             manual = false;
         }
         if (gamepad1.a) {//floor
-            target1 = floor1;
-            target2 = floor2;
+            if (intake_angle == intake_AngleVertical){
+                target1 = vertFloor1;
+                target2 = vertFloor2;
+            }
+            else {
+                target1 = floor1;
+                target2 = floor2;
+                state = "floor";
+            }
             Lift_Power = 0.25;
-            state = "floor";
         }
         if (gamepad1.b && gamepad1.left_bumper){
 //            target1 = wall;
@@ -486,10 +522,17 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             target2 = sub2;
         }
         else if (gamepad1.start) { //into submersible (not needed bc wall preset?)
-            target1 = sub1; //6.4322;
-            target2 = sub2;
+            if (intake_angle == intake_AngleVertical){
+                target1 = vertSub1;
+                target2 = vertSub2;
+                state = "enterSubVert";
+            }
+            else {
+                target1 = sub1; //6.4322;
+                target2 = sub2;
+                state = "enterSub";
+            }
             stateTime = getRuntime();
-            state = "enterSub";
             manual = false;
         }
         if (gamepad1.right_stick_button){ //retract both arms
@@ -564,13 +607,15 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
 
         Motor_Power = 0.5;
 
-        pinpoint.resetPosAndIMU();
-        // wait for pinpoint to finish calibrating
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+        imu.resetYaw();
+//        pinpoint.resetPosAndIMU();
+//        // wait for pinpoint to finish calibrating
+//        try {
+//            Thread.sleep(300);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
 //        pinpoint.update();
         Targeting_Angle = initialHeading;
 
@@ -583,7 +628,9 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     private void Calculate_IMU_Rotation_Power() {
         double Angle_Difference;
 
-        Heading_Angle = pinpoint.getPosition().getHeading(AngleUnit.DEGREES)+initialHeading; //degrees
+        Orientation Direction = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        Heading_Angle = Direction.firstAngle+initialHeading;
+//        Heading_Angle = pinpoint.getPosition().getHeading(AngleUnit.DEGREES)+initialHeading; //degrees
         if (Math.abs(gamepad1.right_stick_x) >= 0.01) {
             imu_rotation = 0;
             Targeting_Angle = Heading_Angle;

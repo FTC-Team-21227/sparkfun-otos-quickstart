@@ -5,18 +5,23 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriver;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.autons.PoseStorage;
 
-@TeleOp(name = "TeleOp2425_V3Robot_Pinpoint")
-public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
+@TeleOp(name = "TeleOp2425_V3Robot_OldIMU")
+public class TeleOp2425_V3Robot_Pinpoint_OldIMU extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
     private PIDController controller1;
     private PIDController controller2;
@@ -95,9 +100,10 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     private Servo Sweeper;
     private TouchSensor ARM1Sensor;
     private TouchSensor ARM2Sensor;
+    private IMU imu;
     double Heading_Angle;
     double Motor_power_BR;
-    double imu_rotation;
+    int imu_rotation;
     double Motor_power_BL;
     double Targeting_Angle;
     double Motor_fwd_power;
@@ -131,7 +137,6 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     double Lift_Power = 1;
     double currTime = 0;
     double initialHeading;
-    boolean back = true;
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
@@ -152,7 +157,8 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
         W_BR = hardwareMap.get(DcMotor.class, "W_BR");
         W_FR = hardwareMap.get(DcMotor.class, "W_FR");
         W_FL = hardwareMap.get(DcMotor.class, "W_FL");
-        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
+//        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
+        imu = hardwareMap.get(IMU.class, "imu");
         ARM1 = hardwareMap.get(DcMotor.class, "ARM1");
         ARM2 = hardwareMap.get(DcMotor.class, "ARM2");
         Hook = hardwareMap.get(CRServo.class, "Hook");
@@ -166,14 +172,14 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
         // Put initialization blocks here.
         Initialization();
         if (opModeIsActive()) {
-            Claw_Angle.setPosition(claw_AngleForward);
-            Intake_Angle.setPosition(intake_AngleFloor);
+            Claw_Angle.setPosition(0);
+            Intake_Angle.setPosition(0.26);
 //            Claw.setPosition(0);
 //            Sweeper.setPosition(0);
             // Put run blocks here.
             while (opModeIsActive()) {
                 currTime = getRuntime();
-                pinpoint.update(/*GoBildaPinpointDriver.readData.ONLY_UPDATE_HEADING*/);
+//                pinpoint.update(GoBildaPinpointDriver.readData.ONLY_UPDATE_HEADING);
                 // Put loop blocks here.
                 Calculate_IMU_Rotation_Power(); //calculates each motor power based on IMU reading
                 Calculate_Motor_Power(); //calculates translational and rotational motor power
@@ -199,24 +205,22 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
                 //controls the hook servo
                 Hook_Control();
                 //reset imu if necessary
-                if (gamepad1.back && !back) {
-                    pinpoint.resetPosAndIMU();
-                    try {
-                        Thread.sleep(300);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                if (gamepad1.back) {
+//                    pinpoint.resetPosAndIMU();
+//                    initialHeading = 0;
+//                    Targeting_Angle = 0;
+//                    Heading_Angle = 0;
+                    imu = hardwareMap.get(IMU.class, "imu");
+                    imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+                    imu.resetYaw();
                     initialHeading = 0;
                     Targeting_Angle = 0;
                     Heading_Angle = 0;
                 }
-                back = gamepad1.back;
                 //        telemetry.addData("ARM1Calibrated",ARM1calibrated);
                 //        telemetry.addData("ARM2Calibrated", ARM2calibrated);
                 //        telemetry.addData("where am i going", !(ARM1calibrated && ARM2calibrated));
                 telemetry.addData("Heading", Heading_Angle);
-                telemetry.addData("Initial Heading", initialHeading);
-                telemetry.addData("Targeting Angle", Targeting_Angle);
                 telemetry.addData("Motor Power", Motor_Power);
                 telemetry.addData("Side Power", Motor_side_power);
                 telemetry.addData("FWD Power", Motor_fwd_power);
@@ -304,11 +308,11 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
         }
         rightTriggerPressed = gamepad1.right_trigger > 0.1;
         if (gamepad1.left_trigger > 0.1 && !leftTriggerPressed && intake_angle < 3) {
-            if (intake_angle == intake_AngleFloor){
-                intake_angle = intake_AngleVertical;
-            }
-            else{
+            if (intake_angle == intake_AngleWall){
                 intake_angle = intake_AngleFloor;
+            }
+            else if (intake_angle == intake_AngleFloor){
+                intake_angle = intake_AngleWall;
             }
             Intake_Angle.setPosition(intake_angle);
             manual = true;
@@ -479,7 +483,6 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             stateTime = getRuntime();
             state = "wall";
             manual = false;
-            Targeting_Angle = -175;
         }
         if (gamepad1.start && gamepad1.left_bumper){
             target1 = sub1;
@@ -564,14 +567,10 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
 
         Motor_Power = 0.5;
 
-        pinpoint.resetPosAndIMU();
-        // wait for pinpoint to finish calibrating
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+//        pinpoint.resetPosAndIMU();
 //        pinpoint.update();
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+        imu.resetYaw();
         Targeting_Angle = initialHeading;
 
         waitForStart();
@@ -583,7 +582,8 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     private void Calculate_IMU_Rotation_Power() {
         double Angle_Difference;
 
-        Heading_Angle = pinpoint.getPosition().getHeading(AngleUnit.DEGREES)+initialHeading; //degrees
+        Orientation Direction = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        Heading_Angle = Direction.firstAngle+initialHeading;
         if (Math.abs(gamepad1.right_stick_x) >= 0.01) {
             imu_rotation = 0;
             Targeting_Angle = Heading_Angle;
@@ -597,9 +597,9 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             if (Math.abs(Angle_Difference) < 1) {
                 imu_rotation = 0;
             } else if (Angle_Difference >= 1) {
-                imu_rotation = (Angle_Difference * 0.01 + 0.1);
+                imu_rotation = (int) (Angle_Difference * 0.01 + 0.1);
             } else {
-                imu_rotation = (Angle_Difference * 0.01 - 0.1);
+                imu_rotation = (int) (Angle_Difference * 0.01 - 0.1);
             }
         }
     }

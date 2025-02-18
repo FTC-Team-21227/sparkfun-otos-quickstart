@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.autons.PoseStorage;
 
-@TeleOp(name = "TeleOp2425_V3Robot_Pinpoint")
-public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
+@TeleOp(name = "TeleOp2425_V3Robot_Pinpoint_VerticalCapabilities")
+public class TeleOp2425_V3Robot_Pinpoint_VerticalCapabilities extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
     private PIDController controller1;
     private PIDController controller2;
@@ -46,6 +46,8 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     private final double floor1 = Subsystem_Constants.floor1;
     private final double down1 = Subsystem_Constants.down1;
     private final double sub1 = Subsystem_Constants.sub1;
+    private final double vertSub1 = Subsystem_Constants.vertSub1;
+    private final double vertFloor1 = Subsystem_Constants.vertFloor1;
 
     private final double highBasket2 = Subsystem_Constants.highBasket2_teleop;
     final double highRung2 = Subsystem_Constants.highRung2;
@@ -56,6 +58,8 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     private final double floor2 = Subsystem_Constants.floor2;
     private final double down2 = Subsystem_Constants.down2;
     private final double sub2 = Subsystem_Constants.sub2;
+    private final double vertSub2 = Subsystem_Constants.vertSub2;
+    private final double vertFloor2 = Subsystem_Constants.vertFloor2;
 
     final double clawScale0 = Subsystem_Constants.clawScale0;
     final double clawScale1 = Subsystem_Constants.clawScale1;
@@ -295,16 +299,39 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
                 telemetry.addData("In enter sub", "yes");
             }
         }
+        else if (state.equals("enterSubVert")) {
+            if (getRuntime() - stateTime > 0.25) {
+                if (claw_angle != claw_AngleForward) {
+                    Claw_Angle.setPosition(claw_AngleForward);
+                    claw_angle = claw_AngleForward;
+                }
+                telemetry.addData("In enter sub vert", "yes");
+            }
+        }
+        else if (state.equals("droppedHighBasket")) {
+            if (getRuntime() - stateTime > 0.1) {
+                if (intake_angle != intake_AngleBasket) {
+                    Intake_Angle.setPosition(intake_AngleBasket+0.2);
+                    intake_angle = intake_AngleBasket+0.2;
+                }
+                telemetry.addData("In dropped high basket", "yes");
+            }
+        }
     }
     private void Intake_Control(){
         if (gamepad1.right_trigger > 0.1 && !rightTriggerPressed) {
             claw = 1 - claw;
             Claw.setPosition(claw);
+            if (state.equals("highBasket")){
+                state = "droppedHighBasket";
+                stateTime = getRuntime();
+                manual = false;
+            }
 //            manual = true;
         }
         rightTriggerPressed = gamepad1.right_trigger > 0.1;
         if (gamepad1.left_trigger > 0.1 && !leftTriggerPressed && intake_angle < 3) {
-            if (intake_angle == intake_AngleFloor){
+            if (intake_angle == intake_AngleFloor || intake_angle == intake_AngleBasket+0.2){
                 intake_angle = intake_AngleVertical;
             }
             else{
@@ -404,8 +431,8 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             target2 = 0;
             ARM2calibrated = true;
         }
-        else if (!ARM2calibrated && ARM2.getPower() != -0.2){
-            ARM2.setPower(-0.2);
+        else if (!ARM2calibrated && ARM2.getPower() != -0.3){
+            ARM2.setPower(-0.3);
         }
         telemetry.addData("We Are Heree","yesd");
     }
@@ -414,7 +441,7 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             ARM1calibrated = false;
             ARM2calibrated = false;
             ARM1.setPower(-0.2);
-            ARM2.setPower(-0.2);
+            ARM2.setPower(-0.3);
         }
         if (gamepad2.a) { //prepare for hang
             target1 = 115.3484; //111.830920056; //111.330920056
@@ -460,10 +487,16 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             manual = false;
         }
         if (gamepad1.a) {//floor
-            target1 = floor1;
-            target2 = floor2;
+            if (intake_angle == intake_AngleVertical){
+                target1 = vertFloor1;
+                target2 = vertFloor2;
+            }
+            else {
+                target1 = floor1;
+                target2 = floor2;
+                state = "floor";
+            }
             Lift_Power = 0.25;
-            state = "floor";
         }
         if (gamepad1.b && gamepad1.left_bumper){
 //            target1 = wall;
@@ -486,10 +519,17 @@ public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
             target2 = sub2;
         }
         else if (gamepad1.start) { //into submersible (not needed bc wall preset?)
-            target1 = sub1; //6.4322;
-            target2 = sub2;
+            if (intake_angle == intake_AngleVertical){
+                target1 = vertSub1;
+                target2 = vertSub2;
+                state = "enterSubVert";
+            }
+            else {
+                target1 = sub1; //6.4322;
+                target2 = sub2;
+                state = "enterSub";
+            }
             stateTime = getRuntime();
-            state = "enterSub";
             manual = false;
         }
         if (gamepad1.right_stick_button){ //retract both arms
