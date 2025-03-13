@@ -218,8 +218,8 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
             target2 = 0;
             ARM2calibrated = true;
         }
-        else if (!ARM2calibrated && ARM2.getPower() != -0.2){
-            ARM2.setPower(-0.2);
+        else if (!ARM2calibrated && ARM2.getPower() != -0.15){
+            ARM2.setPower(-0.15);
         }
         telemetry.addData("We Are Heree","yesd");
     }
@@ -229,7 +229,7 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
             ARM1calibrated = false;
             ARM2calibrated = false;
             ARM1.setPower(-0.2);
-            ARM2.setPower(-0.2);
+            ARM2.setPower(-0.15);
         }
         if (gamepad2.a) { //prepare for hang
             target1 = 113.330920056;

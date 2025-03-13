@@ -18,10 +18,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class TuningOpModes {
-    public static final Class<?> DRIVE_CLASS = PinpointDrive.class; // TODO: change to your drive class i.e. PinpointDrive if using pinpoint
+    public static final Class<?> DRIVE_CLASS = MecanumDrive_Only.class; // TODO: change to your drive class i.e. PinpointDrive if using pinpoint
 
     public static final String GROUP = "quickstart";
-    public static final boolean DISABLED = false;
+    public static final boolean DISABLED = true;
 
     private TuningOpModes() {}
 
@@ -159,7 +159,59 @@ public final class TuningOpModes {
                                 MecanumDrive.PARAMS.kA / MecanumDrive.PARAMS.inPerTick)
                 );
             };
-        } else if (DRIVE_CLASS.equals(TankDrive.class)) {
+        } else if (DRIVE_CLASS.equals(MecanumDrive_Only.class)) {
+            dvf = hardwareMap -> {
+                MecanumDrive_Only md = new MecanumDrive_Only(hardwareMap, new Pose2d(0, 0, 0));
+
+                List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
+                List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
+                if (md.localizer instanceof MecanumDrive_Only.DriveLocalizer) {
+                    MecanumDrive_Only.DriveLocalizer dl = (MecanumDrive_Only.DriveLocalizer) md.localizer;
+                    leftEncs.add(dl.leftFront);
+                    leftEncs.add(dl.leftBack);
+                    rightEncs.add(dl.rightFront);
+                    rightEncs.add(dl.rightBack);
+                } else if (md.localizer instanceof ThreeDeadWheelLocalizer) {
+                    ThreeDeadWheelLocalizer dl = (ThreeDeadWheelLocalizer) md.localizer;
+                    parEncs.add(dl.par0);
+                    parEncs.add(dl.par1);
+                    perpEncs.add(dl.perp);
+                } else if (md.localizer instanceof TwoDeadWheelLocalizer) {
+                    TwoDeadWheelLocalizer dl = (TwoDeadWheelLocalizer) md.localizer;
+                    parEncs.add(dl.par);
+                    perpEncs.add(dl.perp);
+                } else {
+                    throw new RuntimeException("unknown localizer: " + md.localizer.getClass().getName());
+                }
+
+                return new DriveView(
+                        DriveType.MECANUM,
+                        MecanumDrive_Only.PARAMS.inPerTick,
+                        MecanumDrive_Only.PARAMS.maxWheelVel,
+                        MecanumDrive_Only.PARAMS.minProfileAccel,
+                        MecanumDrive_Only.PARAMS.maxProfileAccel,
+                        hardwareMap.getAll(LynxModule.class),
+                        Arrays.asList(
+                                md.leftFront,
+                                md.leftBack
+                        ),
+                        Arrays.asList(
+                                md.rightFront,
+                                md.rightBack
+                        ),
+                        leftEncs,
+                        rightEncs,
+                        parEncs,
+                        perpEncs,
+                        md.lazyImu,
+                        md.voltageSensor,
+                        () -> new MotorFeedforward(MecanumDrive_Only.PARAMS.kS,
+                                MecanumDrive_Only.PARAMS.kV / MecanumDrive_Only.PARAMS.inPerTick,
+                                MecanumDrive_Only.PARAMS.kA / MecanumDrive_Only.PARAMS.inPerTick)
+                );
+            };
+        }
+        else if (DRIVE_CLASS.equals(TankDrive.class)) {
             dvf = hardwareMap -> {
                 TankDrive td = new TankDrive(hardwareMap, new Pose2d(0, 0, 0));
 

@@ -131,7 +131,7 @@ public class TeleOp2425_V3Robot_OldIMU_VerticalCapabilities extends LinearOpMode
     boolean rightTrigger2Pressed = false;
     boolean hookUp = false;
     boolean hookDown = false;
-    int claw = 0;
+    double claw = openClaw;
     double claw_angle = claw_AngleForward;
     double intake_angle = intake_AngleFloor;
     double sweeper = openSweeper;
@@ -312,10 +312,10 @@ public class TeleOp2425_V3Robot_OldIMU_VerticalCapabilities extends LinearOpMode
             }
         }
         else if (state.equals("droppedHighBasket")) {
-            if (getRuntime() - stateTime > 0.1) {
-                if (intake_angle != intake_AngleBasket) {
-                    Intake_Angle.setPosition(intake_AngleBasket+0.2);
-                    intake_angle = intake_AngleBasket+0.2;
+            if (getRuntime() - stateTime > 0.2) {
+                if (intake_angle != intake_AngleBasket-0.2) {
+                    Intake_Angle.setPosition(intake_AngleBasket-0.2);
+                    intake_angle = intake_AngleBasket-0.2;
                 }
                 telemetry.addData("In dropped high basket", "yes");
             }
@@ -323,7 +323,12 @@ public class TeleOp2425_V3Robot_OldIMU_VerticalCapabilities extends LinearOpMode
     }
     private void Intake_Control(){
         if (gamepad1.right_trigger > 0.1 && !rightTriggerPressed) {
-            claw = 1 - claw;
+            if (claw == closeClaw){
+                claw = openClaw;
+            }
+            else {
+                claw = closeClaw;
+            }
             Claw.setPosition(claw);
             if (state.equals("highBasket")){
                 state = "droppedHighBasket";
@@ -334,7 +339,7 @@ public class TeleOp2425_V3Robot_OldIMU_VerticalCapabilities extends LinearOpMode
         }
         rightTriggerPressed = gamepad1.right_trigger > 0.1;
         if (gamepad1.left_trigger > 0.1 && !leftTriggerPressed && intake_angle < 3) {
-            if (intake_angle == intake_AngleFloor || intake_angle == intake_AngleBasket+0.2){
+            if (intake_angle == intake_AngleFloor || intake_angle == intake_AngleBasket-0.2 || intake_angle == intake_AngleRung){
                 intake_angle = intake_AngleVertical;
             }
             else{
@@ -515,7 +520,7 @@ public class TeleOp2425_V3Robot_OldIMU_VerticalCapabilities extends LinearOpMode
             stateTime = getRuntime();
             state = "wall";
             manual = false;
-            Targeting_Angle = -175;
+//            Targeting_Angle = -175;
         }
         if (gamepad1.start && gamepad1.left_bumper){
             target1 = sub1;
@@ -644,9 +649,9 @@ public class TeleOp2425_V3Robot_OldIMU_VerticalCapabilities extends LinearOpMode
             if (Math.abs(Angle_Difference) < 1) {
                 imu_rotation = 0;
             } else if (Angle_Difference >= 1) {
-                imu_rotation = (Angle_Difference * 0.01 + 0.1);
+                imu_rotation = (Angle_Difference * 0.0 /*+ 0.1*/);
             } else {
-                imu_rotation = (Angle_Difference * 0.01 - 0.1);
+                imu_rotation = (Angle_Difference * 0.0 /*- 0.1*/);
             }
         }
     }

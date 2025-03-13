@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 
-@Autonomous(name = "AUTONRIGHT_4specpushTWO_SAFE")
+//@Autonomous(name = "AUTONRIGHT_4specpushTWO_SAFE")
 //supersafe 4 spec
 public class AUTON2025REDRIGHT_V2Robot_8 extends LinearOpMode {
     @Override

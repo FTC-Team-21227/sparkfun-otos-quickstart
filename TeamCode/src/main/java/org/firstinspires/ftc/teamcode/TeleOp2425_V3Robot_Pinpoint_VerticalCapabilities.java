@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.autons.PoseStorage;
 
-@TeleOp(name = "TeleOp2425_V3Robot_Pinpoint_VerticalCapabilities")
+//@TeleOp(name = "TeleOp2425_V3Robot_Pinpoint_VerticalCapabilities")
 public class TeleOp2425_V3Robot_Pinpoint_VerticalCapabilities extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
     private PIDController controller1;
@@ -309,10 +309,10 @@ public class TeleOp2425_V3Robot_Pinpoint_VerticalCapabilities extends LinearOpMo
             }
         }
         else if (state.equals("droppedHighBasket")) {
-            if (getRuntime() - stateTime > 0.1) {
-                if (intake_angle != intake_AngleBasket) {
-                    Intake_Angle.setPosition(intake_AngleBasket+0.2);
-                    intake_angle = intake_AngleBasket+0.2;
+            if (getRuntime() - stateTime > 0.2) {
+                if (intake_angle != intake_AngleBasket-0.2) {
+                    Intake_Angle.setPosition(intake_AngleBasket-0.2);
+                    intake_angle = intake_AngleBasket-0.2;
                 }
                 telemetry.addData("In dropped high basket", "yes");
             }
@@ -331,7 +331,7 @@ public class TeleOp2425_V3Robot_Pinpoint_VerticalCapabilities extends LinearOpMo
         }
         rightTriggerPressed = gamepad1.right_trigger > 0.1;
         if (gamepad1.left_trigger > 0.1 && !leftTriggerPressed && intake_angle < 3) {
-            if (intake_angle == intake_AngleFloor || intake_angle == intake_AngleBasket+0.2){
+            if (intake_angle == intake_AngleFloor || intake_angle == intake_AngleBasket-0.2 || intake_angle == intake_AngleRung){
                 intake_angle = intake_AngleVertical;
             }
             else{
@@ -512,7 +512,12 @@ public class TeleOp2425_V3Robot_Pinpoint_VerticalCapabilities extends LinearOpMo
             stateTime = getRuntime();
             state = "wall";
             manual = false;
-            Targeting_Angle = -175;
+//            Targeting_Angle = -175 + initialHeading;
+//            if (Targeting_Angle > 180) {
+//                Targeting_Angle = Targeting_Angle - 360;
+//            } else if (Targeting_Angle < -180) {
+//                Targeting_Angle = Targeting_Angle + 360;
+//            }
         }
         if (gamepad1.start && gamepad1.left_bumper){
             target1 = sub1;
@@ -602,7 +607,7 @@ public class TeleOp2425_V3Robot_Pinpoint_VerticalCapabilities extends LinearOpMo
         Claw_Angle.scaleRange(claw_AngleScale0, claw_AngleScale1);
         Sweeper.scaleRange(sweeperScale0,sweeperScale1); //0.482
 
-        Motor_Power = 0.5;
+        Motor_Power = 0.4;
 
         pinpoint.resetPosAndIMU();
         // wait for pinpoint to finish calibrating
@@ -622,8 +627,12 @@ public class TeleOp2425_V3Robot_Pinpoint_VerticalCapabilities extends LinearOpMo
      */
     private void Calculate_IMU_Rotation_Power() {
         double Angle_Difference;
-
-        Heading_Angle = pinpoint.getPosition().getHeading(AngleUnit.DEGREES)+initialHeading; //degrees
+        try {
+            Heading_Angle = pinpoint.getPosition().getHeading(AngleUnit.DEGREES) + initialHeading; //degrees
+        }
+        catch (Exception e){
+            Heading_Angle = Targeting_Angle;
+        }
         if (Math.abs(gamepad1.right_stick_x) >= 0.01) {
             imu_rotation = 0;
             Targeting_Angle = Heading_Angle;
@@ -637,9 +646,9 @@ public class TeleOp2425_V3Robot_Pinpoint_VerticalCapabilities extends LinearOpMo
             if (Math.abs(Angle_Difference) < 1) {
                 imu_rotation = 0;
             } else if (Angle_Difference >= 1) {
-                imu_rotation = (Angle_Difference * 0.01 + 0.1);
+                imu_rotation = (Angle_Difference * 0.0 /*+ 0.1*/);
             } else {
-                imu_rotation = (Angle_Difference * 0.01 - 0.1);
+                imu_rotation = (Angle_Difference * 0.0 /*- 0.1*/);
             }
         }
     }

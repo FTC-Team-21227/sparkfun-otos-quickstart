@@ -216,7 +216,7 @@ public class ARM2_V2Robot {
     public Action waitLiftHighBasket(double waitseconds, double seconds) {return new waitLiftTarget(highBasket2,waitseconds,seconds);}
     public Action waitLiftRung(double waitseconds, double seconds) {return new waitLiftTarget(highRung2,waitseconds,seconds);}
     public Action waitLiftRung2(double waitseconds, double seconds) {return new waitLiftTarget(highRung2_2,waitseconds,seconds);}
-    public Action waitLiftRung2First(double waitseconds, double seconds) {return new waitLiftTarget(highRung2_2+1,waitseconds,seconds);}
+    public Action waitLiftRung2First(double waitseconds, double seconds) {return new waitLiftTarget(highRung2_2+0.3,waitseconds,seconds);}
     public Action waitLiftWall(double waitseconds, double seconds) {return new waitLiftTarget(wall2,waitseconds,seconds);}
     public Action waitLiftWall2(double waitseconds, double seconds) {return new waitLiftTarget(wall2_2,waitseconds,seconds);}
     public Action waitLiftLowBasket(double waitseconds, double seconds) {return new waitLiftTarget(lowBasket2,waitseconds,seconds);} //not tested i think

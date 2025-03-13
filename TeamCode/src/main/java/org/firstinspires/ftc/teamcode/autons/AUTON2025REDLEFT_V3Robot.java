@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.PinpointDrive_Left;
 
-@Autonomous(name = "AUTONLEFT_V3Robot_4sample")
+//@Autonomous(name = "AUTONLEFT_V3Robot_4sample")
 //5 sample auto
 public class AUTON2025REDLEFT_V3Robot extends LinearOpMode{
     @Override

@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.PinpointDrive_Left;
 
-@Autonomous(name = "AUTONLEFT_V2Robot")
+//@Autonomous(name = "AUTONLEFT_V2Robot")
 public class AUTON2025REDLEFT_V2Robot extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {

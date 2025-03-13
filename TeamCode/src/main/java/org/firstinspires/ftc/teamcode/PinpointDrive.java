@@ -13,6 +13,8 @@ import com.acmerobotics.roadrunner.ftc.GoBildaPinpointDriverRR;
 import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.RobotLog;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
@@ -129,8 +131,11 @@ public class PinpointDrive extends MecanumDrive {
         }
         pinpoint.update();
         pose = pinpoint.getPositionRR();
+        if (Double.isNaN(pose.position.x) || Double.isNaN(pose.position.y) || Double.isNaN(pose.heading.toDouble()) || Math.abs(pose.heading.toDouble()) > Math.PI) {
+            RobotLog.dd("PinPoint got nan or high", String.valueOf(pose.heading.toDouble()));
+            pose = lastPinpointPose; //skip update
+        }
         lastPinpointPose = pose;
-
         // RR standard
         poseHistory.add(pose);
         while (poseHistory.size() > 100) {

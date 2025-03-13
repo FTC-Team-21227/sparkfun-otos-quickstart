@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.autons.PoseStorage;
 
-@TeleOp(name = "TeleOp2425_V3Robot_Pinpoint")
+//@TeleOp(name = "TeleOp2425_V3Robot_Pinpoint")
 public class TeleOp2425_V3Robot_Pinpoint extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
     private PIDController controller1;

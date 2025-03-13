@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 
-@Autonomous(name = "AUTONRIGHT_V3_5+1_FastSmoothPush")
+//@Autonomous(name = "AUTONRIGHT_V3_5+1_FastSmoothPush")
 //Trying for 5+1 auto just by pushing the samples faster
 public class AUTON2025REDRIGHT_V3Robot_2 extends LinearOpMode {
     @Override

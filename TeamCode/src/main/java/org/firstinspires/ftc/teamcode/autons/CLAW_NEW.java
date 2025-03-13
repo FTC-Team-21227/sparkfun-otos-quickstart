@@ -16,6 +16,7 @@ public class CLAW_NEW {
     final double clawScale1 = Subsystem_Constants.clawScale1;
     final double closeClaw = Subsystem_Constants.closeClaw;
     final double openClaw = Subsystem_Constants.openClaw;
+    final double openMore = Subsystem_Constants.openMore;
     public CLAW_NEW(HardwareMap hardwareMap) {
         Claw = hardwareMap.get(Servo.class, "Claw");
         Claw.scaleRange(clawScale0,clawScale1);
@@ -62,5 +63,11 @@ public class CLAW_NEW {
     }
     public Action openClaw(double runt) {
         return new MoveClaw(openClaw, runt);
+    }
+    public Action openClawMore() {
+        return new MoveClaw(openMore);
+    }
+    public Action openClawMore(double runt) {
+        return new MoveClaw(openMore, runt);
     }
 }

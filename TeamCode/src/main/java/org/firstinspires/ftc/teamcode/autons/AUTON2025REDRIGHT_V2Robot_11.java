@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "AUTONRIGHT_5spec")
+//@Autonomous(name = "AUTONRIGHT_5spec")
 //THE LAST V2 AUTO : 5 psec
 public class AUTON2025REDRIGHT_V2Robot_11 extends LinearOpMode {
     @Override

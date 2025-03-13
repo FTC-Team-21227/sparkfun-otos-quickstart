@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.autons.PoseStorage;
 
-@TeleOp(name = "TeleOp2425_V3Robot_OldIMU")
+//@TeleOp(name = "TeleOp2425_V3Robot_OldIMU")
 public class TeleOp2425_V3Robot_Pinpoint_OldIMU extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
     private PIDController controller1;
@@ -565,7 +565,7 @@ public class TeleOp2425_V3Robot_Pinpoint_OldIMU extends LinearOpMode {
         Claw_Angle.scaleRange(claw_AngleScale0, claw_AngleScale1);
         Sweeper.scaleRange(sweeperScale0,sweeperScale1); //0.482
 
-        Motor_Power = 0.5;
+        Motor_Power = 0.4;
 
 //        pinpoint.resetPosAndIMU();
 //        pinpoint.update();
@@ -597,9 +597,9 @@ public class TeleOp2425_V3Robot_Pinpoint_OldIMU extends LinearOpMode {
             if (Math.abs(Angle_Difference) < 1) {
                 imu_rotation = 0;
             } else if (Angle_Difference >= 1) {
-                imu_rotation = (int) (Angle_Difference * 0.01 + 0.1);
+                imu_rotation = (int) (Angle_Difference * 0.04 /*+ 0.1*/);
             } else {
-                imu_rotation = (int) (Angle_Difference * 0.01 - 0.1);
+                imu_rotation = (int) (Angle_Difference * 0.04 /*- 0.1*/);
             }
         }
     }

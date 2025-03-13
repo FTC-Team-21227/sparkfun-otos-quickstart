@@ -11,15 +11,16 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.MecanumDrive_OnlyLeft;
 import org.firstinspires.ftc.teamcode.PinpointDrive_Left;
 
-@Autonomous(name = "AUTONLEFT_V3Robot_5sample_FAST")
+//@Autonomous(name = "AUTONLEFT_V3Robot_5sample_FAST_NoPinpoint")
 //5 sample auto
-public class AUTON2025REDLEFT_V3Robot_2 extends LinearOpMode{
+public class AUTON2025REDLEFT_V3Robot_4 extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
         Pose2d initialPose = new Pose2d(0, 92, Math.toRadians(0));
-        PinpointDrive_Left drive = new PinpointDrive_Left(hardwareMap, initialPose);
+        MecanumDrive_OnlyLeft drive = new MecanumDrive_OnlyLeft(hardwareMap, initialPose);
         ARM1_V2Robot arm1 = new ARM1_V2Robot(hardwareMap);
         ARM2_V2Robot arm2 = new ARM2_V2Robot(hardwareMap);
         CLAW_NEW claw = new CLAW_NEW(hardwareMap);
@@ -262,9 +263,9 @@ public class AUTON2025REDLEFT_V3Robot_2 extends LinearOpMode{
                 .waitSeconds(0.7);
         TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(8, 112.5, Math.toRadians(-45)))
                 .waitSeconds(0.5)
-                .strafeToLinearHeading(new Vector2d(8.6, 118.5), Math.toRadians(1.5)); //get 2nd sample from the left side
+                .strafeToLinearHeading(new Vector2d(8.4, 118.5), Math.toRadians(1.5)); //get 2nd sample from the left side
 //                .strafeTo(new Vector2d(10.5, 119.5)); //get 1st sample
-        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(8.6, 118.5, Math.toRadians(0)))
+        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(8.4, 118.5, Math.toRadians(0)))
                 .waitSeconds(1)
                 .strafeToLinearHeading(new Vector2d(8, 112.5), Math.toRadians(-45)) //go away from wall bec arms lifting
                 .waitSeconds(0.7);
@@ -282,21 +283,19 @@ public class AUTON2025REDLEFT_V3Robot_2 extends LinearOpMode{
                 .waitSeconds(0.5)
                 .strafeToSplineHeading(new Vector2d(64.5+Y,105),Math.toRadians(-90), new TranslationalVelConstraint(70))
 //                .waitSeconds(1.5) //get 4th sample from the sub
-                .strafeTo(new Vector2d(64.5+Y-2, 94-X/*+2*/), new TranslationalVelConstraint(30)); //get 4th sample
-//                .strafeTo(new Vector2d(64.5+Y-2,94-X),new TranslationalVelConstraint(30));
-        TrajectoryActionBuilder tab10 = drive.actionBuilder(new Pose2d(64.5+Y,94-X, Math.toRadians(-90)))
+                .strafeTo(new Vector2d(64.5+Y, 94-X+2), new TranslationalVelConstraint(30)) //get 4th sample
+                .strafeTo(new Vector2d(64.5+Y-2,94-X),new TranslationalVelConstraint(30));
+        TrajectoryActionBuilder tab10 = drive.actionBuilder(new Pose2d(64.5+Y-2,94-X, Math.toRadians(-90)))
                 .setTangent(Math.toRadians(180))
-                .waitSeconds(0.3) //change0.5
+                .waitSeconds(0.5)
                 .splineToConstantHeading(new Vector2d(64.5,100),Math.toRadians(180), new TranslationalVelConstraint(70))
-                .splineToSplineHeading(new Pose2d(6, 108, Math.toRadians(-45)), Math.toRadians(165),new TranslationalVelConstraint(70)) //go away from wall bec arms lifting
-                .waitSeconds(0.7);//change0.7
-        TrajectoryActionBuilder tab11 = drive.actionBuilder(new Pose2d(6,108,Math.toRadians(-45)))
+                .splineToSplineHeading(new Pose2d(5, 107, Math.toRadians(-45)), Math.toRadians(165),new TranslationalVelConstraint(70)) //go away from wall bec arms lifting
+                .waitSeconds(0.7);
+        TrajectoryActionBuilder tab11 = drive.actionBuilder(new Pose2d(5,107,Math.toRadians(-45)))
                 .setTangent(Math.toRadians(0))
                 .waitSeconds(0.5)
                 .splineToSplineHeading(new Pose2d(52.5, 105, Math.toRadians(-90)),Math.toRadians(0),new TranslationalVelConstraint(70))//avoid bumping into submersible
                 .splineToConstantHeading(new Vector2d(52.5, 87),Math.toRadians(0),new TranslationalVelConstraint(15)); //touch bar
-//                .splineToSplineHeading(new Pose2d(52.5, 105, Math.toRadians(-90)),Math.toRadians(-45),new TranslationalVelConstraint(70))//avoid bumping into submersible
-//                .splineToConstantHeading(new Vector2d(64.5, 87),Math.toRadians(-45),new TranslationalVelConstraint(15)); //touch bar
 
 
 
